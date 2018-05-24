@@ -128,12 +128,12 @@ class Table extends React.Component{
   handleAdd(e){
 
     if(!this.state.inputValue){
-      alert('name field is empty');
+      alert('Name field is empty');
       return;
     };
 
     if(!this.state.inputContent){
-      alert('name Content is empty');
+      alert('Content field is empty');
       return;
     };
 

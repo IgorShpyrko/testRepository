@@ -65,7 +65,8 @@ class Table extends React.Component{
 
     this.setState({
       desks: newDesks
-    })
+    });
+    localStorage.setItem('desks', JSON.stringify(newDesks));
   };
 
   handleSubmitForm(e){
@@ -74,12 +75,16 @@ class Table extends React.Component{
   };
 
   handleChangeInputContent(e){
-    this.setState({ inputContent: e.target.value })
+    e.preventDefault();
+    this.setState({ inputContent: e.target.value });
+    localStorage.setItem('inputContent', e.target.value);
   };
 
   handleChangeInputName(e){
     e.preventDefault();
     this.setState({ inputValue: e.target.value });
+    localStorage.setItem('inputValue', e.target.value);
+    
   };
 
   handleDeleteDesk(e){
@@ -94,12 +99,15 @@ class Table extends React.Component{
     })
 
     this.setState({ desks: newDesks });
+    localStorage.setItem('desks', JSON.stringify(newDesks));
+
   };
 
   handleClosePopup(e){
     this.setState({
       popupActive: false
     });
+    localStorage.setItem('popupActive', false);
   };
 
   handleOpenPopup(e){
@@ -112,6 +120,8 @@ class Table extends React.Component{
         
         return parent(newTarget)
       } else {
+        localStorage.setItem('popupTarget', JSON.stringify(target.id));
+        
         return target
       }
       
@@ -122,7 +132,9 @@ class Table extends React.Component{
     this.setState({
       popupActive: true,
       popupTarget: target
-    })
+    });
+    localStorage.setItem('popupActive', true);
+        
   };
 
   handleAdd(e){
@@ -147,6 +159,9 @@ class Table extends React.Component{
     this.setState((prevState) => {
       let newDesks = prevState.desks;
       newDesks.push(newDesk);
+      localStorage.setItem('desks', JSON.stringify(newDesks));
+      localStorage.setItem('inputValue', '');
+      localStorage.setItem('inputContent', '');
       return {
         inputValue: '',
         inputContent: '',
@@ -154,6 +169,7 @@ class Table extends React.Component{
         quantity: prevState.quantity + 1
       }
     });
+    
   };
 
 

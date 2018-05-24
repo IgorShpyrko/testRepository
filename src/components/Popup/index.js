@@ -98,7 +98,7 @@ class Popup extends React.Component{
                 <React.Fragment>
                   <input type='text' onChange={this.handleCangeNameInput}/>
                   <button className='config-btn' onClick={this.handleApplyNewName}> Apply </button>
-                  <button className='config-btn' onClick={this.handleCloseEditName}> Close </button>
+                  <button className='config-btn' onClick={this.handleCloseEditName}> Cancel </button>
                 </React.Fragment> : null}
             </div>
             <div className='config-content'>
@@ -116,7 +116,7 @@ class Popup extends React.Component{
                 <React.Fragment>
                   <input type='text' onChange={this.handleCangeContentInput}/>
                   <button className='config-btn' onClick={this.handleApplyNewContent}> Apply </button>
-                  <button className='config-btn' onClick={this.handleCloseEditContent}> Close </button>
+                  <button className='config-btn' onClick={this.handleCloseEditContent}> Cancel </button>
                 </React.Fragment> : null}
             </div>
           </div>

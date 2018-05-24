@@ -1,0 +1,13 @@
+.desk {
+    background:rgba(100, 100, 150, 0.3);
+    align-self: flex-start;
+    border: 0.5px solid grey;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 5px;
+}
+
+.del-button{
+    margin: 5px;
+    cursor: pointer;
+}

@@ -177,11 +177,11 @@ class Table extends React.Component{
           </div>
           <form className='form' action="" onSubmit={ this.handleSubmitForm }>
             <div className='form-item'>
-              <span>Name</span>
+              <span className='form-item-span'>Name</span>
               <input className='input-form' type='text' onChange={ this.handleChangeInputName }></input>
             </div>
             <div className='form-item'>
-              <span>Content</span>
+              <span className='form-item-span'>Content</span>
               <input className='input-form' type='text' onChange={ this.handleChangeInputContent }></input>
             </div>
             <div className='add-button-wrapper'>

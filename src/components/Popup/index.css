@@ -27,10 +27,6 @@
     cursor: pointer;
 }
 
-.config-name-btn{
-    color: green;
-}
-
-.config-content-btn{
-    color: green;
+.config-btn{
+    color: rgb(50, 100, 100);
 }

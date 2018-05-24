@@ -5,9 +5,15 @@
     border-radius: 5px;
     margin: 10px;
     padding: 5px;
+    text-align: center;
 }
 
 .del-button{
     margin: 5px;
     cursor: pointer;
+}
+
+.desk-content{
+    min-width: 150px;
+    max-width: 200px;
 }

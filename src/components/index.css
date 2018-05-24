@@ -12,14 +12,27 @@
     padding: 10px;
 }
 
+.form{
+    width: 30%;
+    min-width: 300px;
+    margin: 0 auto;
+}
+
 .form-header-wrapper{
     text-align: center
 }
 
 .form-item{
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
+}
 
+.form-item-span{
+    margin: 0 0 10px 0;
+    padding: 5px 10px 0;
+    border-radius: 5px;
+    background-color: rgb(200, 200, 200);
+    color: #000;
 }
 
 .desk{

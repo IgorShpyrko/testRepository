@@ -88,7 +88,7 @@ class Popup extends React.Component{
               <React.Fragment>
                 <span>name: {arr[0].name}</span>
                 <button 
-                  className='config-name-btn'
+                  className='config-btn'
                   onClick={this.handleEditName}
                   >
                     <span>configure name</span>
@@ -97,8 +97,8 @@ class Popup extends React.Component{
               {this.state.configName ? 
                 <React.Fragment>
                   <input type='text' onChange={this.handleCangeNameInput}/>
-                  <button onClick={this.handleApplyNewName}> Apply </button>
-                  <button onClick={this.handleCloseEditName}> Close </button>
+                  <button className='config-btn' onClick={this.handleApplyNewName}> Apply </button>
+                  <button className='config-btn' onClick={this.handleCloseEditName}> Close </button>
                 </React.Fragment> : null}
             </div>
             <div className='config-content'>
@@ -106,7 +106,7 @@ class Popup extends React.Component{
               <React.Fragment>
                 <span>content: {arr[0].content}</span>
                 <button 
-                  className='config-content-btn'
+                  className='config-btn'
                   onClick={this.handleEditContent}
                   >
                     <span>configure content</span>
@@ -115,8 +115,8 @@ class Popup extends React.Component{
               {this.state.configContent ? 
                 <React.Fragment>
                   <input type='text' onChange={this.handleCangeContentInput}/>
-                  <button onClick={this.handleApplyNewContent}> Apply </button>
-                  <button onClick={this.handleCloseEditContent}> Close </button>
+                  <button className='config-btn' onClick={this.handleApplyNewContent}> Apply </button>
+                  <button className='config-btn' onClick={this.handleCloseEditContent}> Close </button>
                 </React.Fragment> : null}
             </div>
           </div>

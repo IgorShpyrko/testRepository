@@ -7,11 +7,11 @@ class Table extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      popupActive: false,
-      inputValue: '',
-      inputContent: '',
-      quantity: 4,
-      desks: [
+      popupActive: JSON.parse(localStorage.getItem('popupActive')) || false,
+      inputValue: localStorage.getItem('inputValue') || '',
+      inputContent: localStorage.getItem('inputContent') || '',
+      quantity: localStorage.getItem('quantity') || 4,
+      desks: JSON.parse(localStorage.getItem('desks')) || [
         {
           id: 0,
           name: 'first',
@@ -172,7 +172,6 @@ class Table extends React.Component{
     
   };
 
-
   render(){
 
     return(
@@ -215,7 +214,7 @@ class Table extends React.Component{
         { this.state.desks.map((item) => (
           <Desk 
             id={ item.id }
-            key={ item.id } 
+            key={ item.id }
             name={ item.name } 
             content={ item.content }
             onClick={ this.handleOpenPopup }

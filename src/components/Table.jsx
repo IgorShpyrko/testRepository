@@ -7,9 +7,9 @@ class Table extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      popupActive: JSON.parse(localStorage.getItem('popupActive')) || false,
-      inputValue: localStorage.getItem('inputValue') || '',
-      inputContent: localStorage.getItem('inputContent') || '',
+      popupActive: false,
+      inputValue: '',
+      inputContent: '',
       quantity: localStorage.getItem('quantity') || 4,
       desks: JSON.parse(localStorage.getItem('desks')) || [
         {
@@ -77,13 +77,11 @@ class Table extends React.Component{
   handleChangeInputContent(e){
     e.preventDefault();
     this.setState({ inputContent: e.target.value });
-    localStorage.setItem('inputContent', e.target.value);
   };
 
   handleChangeInputName(e){
     e.preventDefault();
     this.setState({ inputValue: e.target.value });
-    localStorage.setItem('inputValue', e.target.value);
     
   };
 
@@ -107,7 +105,6 @@ class Table extends React.Component{
     this.setState({
       popupActive: false
     });
-    localStorage.setItem('popupActive', false);
   };
 
   handleOpenPopup(e){
@@ -133,8 +130,6 @@ class Table extends React.Component{
       popupActive: true,
       popupTarget: target
     });
-    localStorage.setItem('popupActive', true);
-        
   };
 
   handleAdd(e){
@@ -160,8 +155,6 @@ class Table extends React.Component{
       let newDesks = prevState.desks;
       newDesks.push(newDesk);
       localStorage.setItem('desks', JSON.stringify(newDesks));
-      localStorage.setItem('inputValue', '');
-      localStorage.setItem('inputContent', '');
       return {
         inputValue: '',
         inputContent: '',

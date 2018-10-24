@@ -34,17 +34,9 @@ class Table extends React.Component{
         },
       ]
     };
-    this.handleChangeDesk = this.handleChangeDesk.bind(this);
-    this.handleSubmitForm = this.handleSubmitForm.bind(this);
-    this.handleChangeInputName = this.handleChangeInputName.bind(this);
-    this.handleChangeInputContent = this.handleChangeInputContent.bind(this);
-    this.handleDeleteDesk = this.handleDeleteDesk.bind(this);
-    this.handleClosePopup = this.handleClosePopup.bind(this);
-    this.handleOpenPopup = this.handleOpenPopup.bind(this);
-    this.handleAdd = this.handleAdd.bind(this);
   };
 
-  handleChangeDesk(name, content){
+  handleChangeDesk = (name, content) => {
     
     let newDesks = [];
     this.state.desks.filter((item) => {
@@ -68,21 +60,21 @@ class Table extends React.Component{
     })
   };
 
-  handleSubmitForm(e){
+  handleSubmitForm = (e) => {
     e.preventDefault();
     e.target.reset();
   };
 
-  handleChangeInputContent(e){
+  handleChangeInputContent = (e) => {
     this.setState({ inputContent: e.target.value })
   };
 
-  handleChangeInputName(e){
+  handleChangeInputName = (e) => {
     e.preventDefault();
     this.setState({ inputValue: e.target.value });
   };
 
-  handleDeleteDesk(e){
+  handleDeleteDesk = (e) => {
     let newDesks = this.state.desks.filter((item) => {
 
       if(Number(item.id) === Number(e.target.parentNode.id) ){ 
@@ -96,13 +88,13 @@ class Table extends React.Component{
     this.setState({ desks: newDesks });
   };
 
-  handleClosePopup(e){
+  handleClosePopup = (e) => {
     this.setState({
       popupActive: false
     });
   };
 
-  handleOpenPopup(e){
+  handleOpenPopup = (e) => {
     if(e.target.localName === 'button') return
       
     function parent(target) {
@@ -125,7 +117,7 @@ class Table extends React.Component{
     })
   };
 
-  handleAdd(e){
+  handleAdd = (e) => {
 
     if(!this.state.inputValue){
       alert('Name field is empty');
@@ -158,7 +150,6 @@ class Table extends React.Component{
 
 
   render(){
-
     return(
       
       <React.Fragment>

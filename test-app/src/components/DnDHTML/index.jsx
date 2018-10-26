@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import imgSrc from '../media/website.jpg'
+import imgSrc from '../../media/website.jpg'
 
 const styles = {
   div: {

@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "immutability-helper": "^2.8.1",
     "react": "^16.6.0",
+    "react-dnd-html5-backend": "^5.0.1",
     "react-dom": "^16.6.0",
-    "react-scripts": "2.0.5"
+    "react-scripts": "2.0.5",
+    "redux": "^4.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -21,5 +24,11 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "lodash.flow": "^3.5.0",
+    "react-dnd": "^5.0.0",
+    "react-redux": "^5.1.0",
+    "redux-devtools-extension": "^2.13.5"
+  }
 }

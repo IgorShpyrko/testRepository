@@ -4,7 +4,7 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
 
 import { fetchDescsAction } from '../../actions/descs';
-import Card from './components/Card'
+import Card from './tableComponents/Card'
 
 const update = require('immutability-helper');
 
@@ -14,7 +14,6 @@ const styles = {
     flexWrap: 'wrap'
   }
 }
-
 
 class Table extends Component {
   state = { 
@@ -32,6 +31,10 @@ class Table extends Component {
 				},
 			}),
 		)
+  }
+
+  moveTask = () => {
+    console.log('dragging task')
   }
 
   componentDidMount() {
@@ -76,7 +79,8 @@ class Table extends Component {
                 index={idx}
                 id={desc.id}
                 desc={desc}
-                moveCard={this.moveCard} />
+                moveCard={this.moveCard} 
+                moveTask={this.moveTask}/>
             )
           })}
         </div>
@@ -84,7 +88,7 @@ class Table extends Component {
     );
   }
 }
-
+    
 const mapStateToProps = state => {
   return {
     descs: state.descReducer.descs

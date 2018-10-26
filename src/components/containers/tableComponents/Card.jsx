@@ -13,6 +13,8 @@ import {
 } from 'react-dnd';
 // import { XYCoord } from 'dnd-core';
 
+import Task from './Task';
+
 const cardSource = {
 	beginDrag(props) {
 		return {
@@ -113,11 +115,15 @@ class Card extends React.Component {
           <div key={desc.id} className="desc-item">
               <h4>{desc.name}</h4>
               <div className="tasks">
-                {desc.tasks && desc.tasks.map(task => {
+                {desc.tasks && desc.tasks.map((task, idx) => {
                   return (
-                    <div className="task" key={`task${task.id}`}>
-                      {task.value}
-                    </div>
+                   <Task 
+									 	key={`task${task.id}`}
+										task={task}
+										index={idx}
+										id={task.id}
+										moveTask={this.props.moveTask}
+										/>
                   )
                 })}
               </div>

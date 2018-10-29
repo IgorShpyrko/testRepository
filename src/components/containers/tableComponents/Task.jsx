@@ -61,20 +61,20 @@ const taskTarget = {
 
 		// Dragging downwards
 		if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-      if (hoverClientX < hoverMiddleX) {
+      // if (hoverClientX < hoverMiddleX) {
         return
-      }
+      // }
 		}
 
 		// Dragging upwards
 		if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-      if (hoverClientX > hoverMiddleX) {
+      // if (hoverClientX > hoverMiddleX) {
         return
-      }
+      // }
 		}
 
 		// Time to actually perform the action
-		props.moveTask(dragIndex, hoverIndex)
+		props.moveTask(dragIndex, props.desk.id, hoverIndex)
 
 		// Note: we're mutating the monitor item here!
 		// Generally it's better to avoid mutations,

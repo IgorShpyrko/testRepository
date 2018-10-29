@@ -1,5 +1,5 @@
-import { descs } from '../constants/descs';
+import { desks } from '../constants/desks';
 
-export const fetchDescs = () => {
-    return descs
+export const fetchDesks = () => {
+    return desks
 }

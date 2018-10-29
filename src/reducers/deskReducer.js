@@ -1,15 +1,15 @@
 import { types } from '../constants/types'
 
 const initialState = {
-  descs: null
+  desks: null
 }
 
-export const descReducer = (state = initialState, action) => {
+export const deskReducer = (state = initialState, action) => {
   switch (action.type) {
     case types.FETCH_DESKS:
       return {
         ...state,
-        descs: action.descs
+        desks: action.desks
       }
     default:
       return state

@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
-import { descReducer } from './descReducer';
+import { deskReducer } from './deskReducer';
 
 export const rootReducer = combineReducers({
-  descReducer
+  deskReducer
 })

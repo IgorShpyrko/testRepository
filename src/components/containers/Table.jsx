@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
 
-import { fetchDescsAction } from '../../actions/descs';
+import { fetchDesksAction } from '../../actions/desks';
 import Card from './tableComponents/Card'
 
 const update = require('immutability-helper');
@@ -17,68 +17,84 @@ const styles = {
 
 class Table extends Component {
   state = { 
-    descs: null
+    desks: null
   }
 
   moveCard = (dragIndex, hoverIndex) => {
-		const { descs } = this.state
-		const dragDesc = descs[dragIndex]
+		const { desks } = this.state
+    const dragDesk = desks[dragIndex]
 
 		this.setState(
 			update(this.state, {
-				descs: {
-					$splice: [[dragIndex, 1], [hoverIndex, 0, dragDesc]],
-				},
+				desks: {
+					$splice: [[dragIndex, 1], [hoverIndex, 0, dragDesk]],
+				}
 			}),
 		)
   }
 
-  moveTask = () => {
-    console.log('dragging task')
+  moveTask = (dragIndex, cardIndex, hoverIndex) => {
+    console.log('dragIndex :', dragIndex);
+    console.log('cardIndex :', cardIndex);
+    console.log('hoverIndex :', hoverIndex);
+    
+    const { desks } = this.state
+    const dragTask = desks[cardIndex - 1].tasks[dragIndex]
+
+		this.setState(
+			update(this.state, {
+        desks: {
+          [cardIndex - 1]: {
+            tasks: {
+              $splice: [[dragIndex, 1], [hoverIndex, 0, dragTask]],
+            }
+          }
+        }
+      }),
+		)
   }
 
   componentDidMount() {
-    const descs = JSON.parse(window.localStorage.getItem('descs'))
-    console.log(descs)
-    if (!descs) {
-      this.props.fetchDescsFunction()
+    const desks = JSON.parse(window.localStorage.getItem('desks'))
+    if (!desks) {
+      this.props.fetchDesksFunction()
     } else {
       this.setState({
-        descs: descs
+        desks: desks
       })
     }
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.descs) {
-      if (this.props.descs !== prevProps.descs) {
-        window.localStorage.setItem('descs', JSON.stringify(this.props.descs))
+    if (this.props.desks) {
+      if (this.props.desks !== prevProps.desks) {
+        window.localStorage.setItem('desks', JSON.stringify(this.props.desks))
         this.setState({
-          descs: this.props.descs
+          desks: this.props.desks
         })
       }
     }
-    if(this.state.descs) {
-      if (this.state.descs !== prevState.descs) {
-        window.localStorage.setItem('descs', JSON.stringify(this.state.descs))
+    if(this.state.desks) {
+      if (this.state.desks !== prevState.desks) {
+        window.localStorage.setItem('desks', JSON.stringify(this.state.desks))
       }
     }
   }
 
   render() {
-    const { descs } = this.state
+    const { desks } = this.state
     return (
       <React.Fragment>
         <h3>Table</h3>
         <hr />
         <div className='cards-wrapper' style={styles.cardsWrapper}>
-          {descs && descs.map((desc, idx) => {
+          {desks && desks.map((desk, idx) => {
             return (
               <Card
-                key={desc.id}
+                key={desk.id}
                 index={idx}
-                id={desc.id}
-                desc={desc}
+                id={desk.id}
+                desk={desk}
                 moveCard={this.moveCard} 
                 moveTask={this.moveTask}/>
             )
@@ -91,14 +107,14 @@ class Table extends Component {
     
 const mapStateToProps = state => {
   return {
-    descs: state.descReducer.descs
+    desks: state.deskReducer.desks
   }
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchDescsFunction: () => {
-      return dispatch(fetchDescsAction())
+    fetchDesksFunction: () => {
+      return dispatch(fetchDesksAction())
     }
   }
 }

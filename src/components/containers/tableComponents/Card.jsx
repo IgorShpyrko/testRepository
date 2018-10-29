@@ -98,7 +98,7 @@ const styles = {
 class Card extends React.Component {
 	render() {
     const {
-      desc,
+      desk,
 			isDragging,
 			connectDragSource,
 			connectDropTarget,
@@ -111,14 +111,15 @@ class Card extends React.Component {
 			connectDropTarget &&
 			connectDragSource(
 				connectDropTarget(
-        <div className="desc-item-wrapper" style={{ opacity, ...styles.deskItemWrapper }}>
-          <div key={desc.id} className="desc-item">
-              <h4>{desc.name}</h4>
+        <div className="desk-item-wrapper" style={{ opacity, ...styles.deskItemWrapper }}>
+          <div key={desk.id} className="desk-item">
+              <h4>{desk.name}</h4>
               <div className="tasks">
-                {desc.tasks && desc.tasks.map((task, idx) => {
+                {desk.tasks && desk.tasks.map((task, idx) => {
                   return (
                    <Task 
-									 	key={`task${task.id}`}
+										key={idx}
+										desk={desk}
 										task={task}
 										index={idx}
 										id={task.id}

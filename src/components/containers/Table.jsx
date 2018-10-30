@@ -33,7 +33,7 @@ class Table extends Component {
 		)
   }
 
-  moveTask = (deskIndex, hoverTaskIndex, draggedTask) => {
+  moveTask = (taskIndex, deskIndex, hoverTaskIndex, draggedTask) => {
     const desks = JSON.parse(JSON.stringify(this.state.desks))
 
     function returnTask (desks, draggedTask) {
@@ -58,6 +58,7 @@ class Table extends Component {
         }
       })
       desk.tasks = newTasks
+        // console.log(desk)
       return desk
     })
 

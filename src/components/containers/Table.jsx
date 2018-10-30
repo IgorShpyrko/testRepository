@@ -4,12 +4,12 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
 
 import { fetchDesksAction } from '../../actions/desks';
-import Card from './tableComponents/Card'
+import Desk from './tableComponents/Desk'
 
 const update = require('immutability-helper');
 
 const styles = {
-  cardsWrapper: {
+  desksWrapper: {
     display: 'flex',
     flexWrap: 'wrap'
   }
@@ -20,7 +20,7 @@ class Table extends Component {
     desks: null
   }
 
-  moveCard = (dragIndex, hoverIndex) => {
+  moveDesk = (dragIndex, hoverIndex) => {
 		const { desks } = this.state
     const dragDesk = desks[dragIndex]
 
@@ -33,25 +33,39 @@ class Table extends Component {
 		)
   }
 
-  moveTask = (dragIndex, cardIndex, hoverIndex) => {
-    console.log('dragIndex :', dragIndex);
-    console.log('cardIndex :', cardIndex);
-    console.log('hoverIndex :', hoverIndex);
-    
-    const { desks } = this.state
-    const dragTask = desks[cardIndex - 1].tasks[dragIndex]
+  moveTask = (deskIndex, hoverTaskIndex, draggedTask) => {
+    const desks = JSON.parse(JSON.stringify(this.state.desks))
 
-		this.setState(
-			update(this.state, {
-        desks: {
-          [cardIndex - 1]: {
-            tasks: {
-              $splice: [[dragIndex, 1], [hoverIndex, 0, dragTask]],
-            }
+    function returnTask (desks, draggedTask) {
+      let searchedTask;
+      desks.forEach(desk => {
+        desk.tasks.forEach(task => {
+          if (task.id === draggedTask.id) {
+            searchedTask = task
           }
+        })
+      })
+      return searchedTask
+    }
+
+    const dragTask = returnTask(desks, draggedTask) 
+
+    desks.map(desk => {
+      const newTasks = []
+      desk.tasks.filter(task => {
+        if (task.id !== dragTask.id) {
+          newTasks.push(task)
         }
-      }),
-		)
+      })
+      desk.tasks = newTasks
+      return desk
+    })
+
+    dragTask && desks[deskIndex].tasks.splice(hoverTaskIndex, 0, dragTask)
+
+		this.setState({
+      desks: desks
+    })
   }
 
   componentDidMount() {
@@ -83,19 +97,20 @@ class Table extends Component {
 
   render() {
     const { desks } = this.state
+    console.log()
     return (
       <React.Fragment>
         <h3>Table</h3>
         <hr />
-        <div className='cards-wrapper' style={styles.cardsWrapper}>
+        <div className='desks-wrapper' style={styles.desksWrapper}>
           {desks && desks.map((desk, idx) => {
             return (
-              <Card
+              <Desk
                 key={desk.id}
-                index={idx}
+                deskIndex={idx}
                 id={desk.id}
                 desk={desk}
-                moveCard={this.moveCard} 
+                moveDesk={this.moveDesk} 
                 moveTask={this.moveTask}/>
             )
           })}

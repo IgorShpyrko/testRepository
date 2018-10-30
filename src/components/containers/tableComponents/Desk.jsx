@@ -15,22 +15,22 @@ import {
 
 import Task from './Task';
 
-const cardSource = {
+const deskSource = {
 	beginDrag(props) {
 		return {
 			id: props.id,
-			index: props.index,
+			deskIndex: props.deskIndex,
 		}
 	},
 }
 
-const cardTarget = {
+const deskTarget = {
 	hover(props, monitor, component) {
 		if (!component) {
 			return null
 		}
-		const dragIndex = monitor.getItem().index
-		const hoverIndex = props.index
+		const dragIndex = monitor.getItem().deskIndex
+		const hoverIndex = props.deskIndex
 
 		// Don't replace items with themselves
 		if (dragIndex === hoverIndex) {
@@ -77,13 +77,13 @@ const cardTarget = {
 		}
 
 		// Time to actually perform the action
-		props.moveCard(dragIndex, hoverIndex)
+		props.moveDesk(dragIndex, hoverIndex)
 
 		// Note: we're mutating the monitor item here!
 		// Generally it's better to avoid mutations,
 		// but it's good here for the sake of performance
 		// to avoid expensive index searches.
-		monitor.getItem().index = hoverIndex
+		monitor.getItem().deskIndex = hoverIndex
 	},
 }
 
@@ -95,8 +95,9 @@ const styles = {
   }
 }
 
-class Card extends React.Component {
+class Desk extends React.Component {
 	render() {
+		// console.log('this.props', this.props)
     const {
       desk,
 			isDragging,
@@ -112,17 +113,17 @@ class Card extends React.Component {
 			connectDragSource(
 				connectDropTarget(
         <div className="desk-item-wrapper" style={{ opacity, ...styles.deskItemWrapper }}>
-          <div key={desk.id} className="desk-item">
+          <div className="desk-item">
               <h4>{desk.name}</h4>
               <div className="tasks">
                 {desk.tasks && desk.tasks.map((task, idx) => {
                   return (
                    <Task 
-										key={idx}
-										desk={desk}
-										task={task}
-										index={idx}
+										key={task.id}
 										id={task.id}
+										task={task}
+										taskIndex={idx}
+										deskIndex={this.props.deskIndex}
 										moveTask={this.props.moveTask}
 										/>
                   )
@@ -137,17 +138,17 @@ class Card extends React.Component {
 
 export default flow(
   DragSource(
-    'card',
-    cardSource,
+    'desk',
+    deskSource,
     (connect, monitor) => ({
       connectDragSource: connect.dragSource(),
       isDragging: monitor.isDragging(),
     }),
   ),
   DropTarget(
-    'card',
-    cardTarget,
+    'desk',
+    deskTarget,
     (connect) => ({
     connectDropTarget: connect.dropTarget(),
   }))
-)(Card);
+)(Desk);

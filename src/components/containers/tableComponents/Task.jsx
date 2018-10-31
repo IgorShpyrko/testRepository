@@ -12,7 +12,7 @@ import {
 	DragSourceMonitor */
 } from 'react-dnd';
 
-const taskSource = {
+const taskDragSource = {
 	beginDrag(props) {
 		return {
 			id: props.id,
@@ -22,16 +22,12 @@ const taskSource = {
 	}
 }
 
-const taskTarget = {
+const taskDropTarget = {
+	
 	hover(props, monitor, component) {
-		// console.log('props :', props);
-		// console.log('monitor :', monitor);
-		// console.log('component :', component);
-		
-		if (!component) {
-			return null
-		}
-
+		// if (!component) {
+		// 	return null
+		// }
 		const taskIndex = monitor.getItem().taskIndex
 		const hoverTaskIndex = props.taskIndex
 
@@ -49,7 +45,7 @@ const taskTarget = {
 		const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
 
     // Get horizontal middle
-    // const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2
+    const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2
 
 		// Determine mouse position
 		const clientOffset = monitor.getClientOffset()
@@ -58,17 +54,13 @@ const taskTarget = {
     const hoverClientY = (clientOffset).y - hoverBoundingRect.top
     
     // Get pixels to the left
-    // const hoverClientX = (clientOffset).x - hoverBoundingRect.left
-
-		// Only perform the move when the mouse has crossed half of the items height
-		// When dragging downwards, only move when the cursor is below 50%
-		// When dragging upwards, only move when the cursor is above 50%
+    const hoverClientX = (clientOffset).x - hoverBoundingRect.left
 
 		// Dragging downwards
 		if (taskIndex < hoverTaskIndex && hoverClientY < hoverMiddleY) {
-      // if (hoverClientX < hoverMiddleX) {
+      if (hoverClientX < hoverMiddleX) {
         return
-      // }
+      }
 		}
 
 		// Dragging upwards
@@ -116,7 +108,7 @@ class Task extends Component {
 export default flow(
   DragSource(
     'task',
-    taskSource,
+    taskDragSource,
     (connect, monitor) => ({
       connectDragSource: connect.dragSource(),
       isDragging: monitor.isDragging(),
@@ -124,7 +116,7 @@ export default flow(
   ),
   DropTarget(
     'task',
-    taskTarget,
+    taskDropTarget,
     (connect) => ({
     connectDropTarget: connect.dropTarget(),
   }))

@@ -15,7 +15,7 @@ import {
 
 import Task from './Task';
 
-const deskSource = {
+const deskDragSource = {
 	beginDrag(props) {
 		return {
 			id: props.id,
@@ -24,67 +24,76 @@ const deskSource = {
 	},
 }
 
-const deskTarget = {
+const deskDropTarget = {
 	hover(props, monitor, component) {
 		if (!component) {
 			return null
 		}
-		const dragIndex = monitor.getItem().deskIndex
-		const hoverIndex = props.deskIndex
+		// console.log(monitor.getItemType())
+		const type = monitor.getItemType()
+		if (type === 'desk') {
+			const dragIndex = monitor.getItem().deskIndex
+			const hoverIndex = props.deskIndex
 
-		// Don't replace items with themselves
-		if (dragIndex === hoverIndex) {
-			return
+			// Don't replace items with themselves
+			if (dragIndex === hoverIndex) {
+				return
+			}
+
+			// Determine rectangle on screen
+			const hoverBoundingRect = (findDOMNode(
+				component,
+			)).getBoundingClientRect()
+
+			// Get vertical middle
+			const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
+
+			// Get horizontal middle
+			const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2
+			// console.log(hoherMiddleX)
+
+			// Determine mouse position
+			const clientOffset = monitor.getClientOffset()
+
+			// Get pixels to the top
+			const hoverClientY = (clientOffset).y - hoverBoundingRect.top
+			
+			// Get pixels to the left
+			const hoverClientX = (clientOffset).x - hoverBoundingRect.left
+
+			// Only perform the move when the mouse has crossed half of the items height
+			// When dragging downwards, only move when the cursor is below 50%
+			// When dragging upwards, only move when the cursor is above 50%
+
+			// Dragging downwards
+			if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+				if (hoverClientX < hoverMiddleX) {
+					return
+				}
+			}
+
+			// Dragging upwards
+			if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+				if (hoverClientX > hoverMiddleX) {
+					return
+				}
+			}
+
+				// Time to actually perform the action
+				props.moveDesk(dragIndex, hoverIndex)
+
+				// Note: we're mutating the monitor item here!
+				// Generally it's better to avoid mutations,
+				// but it's good here for the sake of performance
+				// to avoid expensive index searches.
+				monitor.getItem().deskIndex = hoverIndex
+			}
+			
+			else if (type === 'task') {
+				const item = monitor.getItem()
+				props.moveTask(null, props.deskIndex, null, item)
+			}
 		}
-
-		// Determine rectangle on screen
-		const hoverBoundingRect = (findDOMNode(
-			component,
-    )).getBoundingClientRect()
-
-		// Get vertical middle
-		const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
-
-    // Get horizontal middle
-    const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2
-    // console.log(hoherMiddleX)
-
-		// Determine mouse position
-		const clientOffset = monitor.getClientOffset()
-
-		// Get pixels to the top
-    const hoverClientY = (clientOffset).y - hoverBoundingRect.top
-    
-    // Get pixels to the left
-    const hoverClientX = (clientOffset).x - hoverBoundingRect.left
-
-		// Only perform the move when the mouse has crossed half of the items height
-		// When dragging downwards, only move when the cursor is below 50%
-		// When dragging upwards, only move when the cursor is above 50%
-
-		// Dragging downwards
-		if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-      if (hoverClientX < hoverMiddleX) {
-        return
-      }
-		}
-
-		// Dragging upwards
-		if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-      if (hoverClientX > hoverMiddleX) {
-        return
-      }
-		}
-
-		// Time to actually perform the action
-		props.moveDesk(dragIndex, hoverIndex)
-
-		// Note: we're mutating the monitor item here!
-		// Generally it's better to avoid mutations,
-		// but it's good here for the sake of performance
-		// to avoid expensive index searches.
-		monitor.getItem().deskIndex = hoverIndex
-	},
 }
 
 const styles = {
@@ -139,15 +148,15 @@ class Desk extends React.Component {
 export default flow(
   DragSource(
     'desk',
-    deskSource,
+    deskDragSource,
     (connect, monitor) => ({
       connectDragSource: connect.dragSource(),
       isDragging: monitor.isDragging(),
     }),
   ),
   DropTarget(
-    'desk',
-    deskTarget,
+		['desk', 'task'],
+    deskDropTarget,
     (connect) => ({
     connectDropTarget: connect.dropTarget(),
   }))

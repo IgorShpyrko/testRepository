@@ -21,6 +21,7 @@ class Table extends Component {
   }
 
   moveDesk = (dragIndex, hoverIndex) => {
+
 		const { desks } = this.state
     const dragDesk = desks[dragIndex]
 
@@ -50,19 +51,23 @@ class Table extends Component {
 
     const dragTask = returnTask(desks, draggedTask) 
 
-    desks.map(desk => {
-      const newTasks = []
-      desk.tasks.filter(task => {
-        if (task.id !== dragTask.id) {
-          newTasks.push(task)
-        }
+    if (hoverTaskIndex === null && !desks[deskIndex].tasks) {
+      desks[deskIndex].tasks = [dragTask]
+    } else {
+      desks.map(desk => {
+        const newTasks = []
+        desk.tasks.filter(task => {
+          if (task.id !== dragTask.id) {
+            newTasks.push(task)
+          }
+          return null
+        })
+        desk.tasks = newTasks
+        return desk
       })
-      desk.tasks = newTasks
-        // console.log(desk)
-      return desk
-    })
+      dragTask && desks[deskIndex].tasks.splice(hoverTaskIndex, 0, dragTask)
+    }
 
-    dragTask && desks[deskIndex].tasks.splice(hoverTaskIndex, 0, dragTask)
 
 		this.setState({
       desks: desks

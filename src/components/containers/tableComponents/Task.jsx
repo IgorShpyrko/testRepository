@@ -44,20 +44,86 @@ const taskDropTarget = {
 }
 
 class Task extends Component {
-  state = {  }
+	state = {
+		value: '',
+		edit: false,
+		prevValue: ''
+	}
+
+	handleChange = e => {
+		this.setState({
+			value: e.target.value
+		})
+	}
+
+	handleCancel = () => {
+		this.setState({
+			edit: false,
+			value: this.state.prevValue,
+			prevValue: ''
+		})
+	}
+
+	handleApply = (value, id) => {
+		this.props.onChangeTask(value, id)
+		this.setState({
+			edit: false,
+			prevValue: ''
+		})
+	}
+
+	handleKeyPress = (e, task) => {
+		if (e.keyCode === 27) {
+			this.handleCancel()
+			return
+		}
+		if (e.keyCode === 13) {
+			this.handleApply(this.state.value, task.id)
+		}
+	}
+	
+	onClickTask = (e, task) => {
+		this.setState(prevState => {
+			return {
+				edit: true,
+				prevValue: prevState.value
+			}
+		})
+	}
+
+	componentDidMount() {
+		this.setState({
+			value: this.props.task.value
+		})
+	}
+
+	componentDidUpdate(prevProps) {
+		if (prevProps.task.value !== this.props.task.value) {
+			this.setState({
+				value: this.props.task.value
+			})
+		}
+	}
+
   render() {
-    const {
-      task,
-			connectDragSource,
-			connectDropTarget,
-    } = this.props
+		const { task, isDragging, connectDragSource, connectDropTarget, } = this.props
+		const { edit } = this.state
     return (
 			connectDragSource &&
 			connectDropTarget &&
 			connectDragSource(
 				connectDropTarget(
-          <div className="task">
-            {task.value}
+          <div className="task" onClick={ e => {!isDragging && this.onClickTask(e, task)} }>
+						{!edit
+							? this.state.value
+							: <input 
+									autoFocus
+									value={this.state.value}
+									onChange={this.handleChange}
+									onBlur={this.handleCancel}
+									onKeyDown={ e => {this.handleKeyPress(e, task)} }
+								/>
+						}
           </div>
       )
 			)

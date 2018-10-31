@@ -17,11 +17,30 @@ const styles = {
 class Table extends Component {
   state = { 
     desks: null
-  }
+  };
+
+  onChangeTask = (taskNewValue, taskId) => {
+    // console.log(taskNewValue);
+    // console.log(taskId);
+
+    const desks = JSON.parse(JSON.stringify(this.state.desks));
+
+    desks.forEach(desk => {
+      desk.tasks.forEach(task => {
+        if (task.id === taskId) {
+          task.value = taskNewValue
+        }
+      })
+    })
+
+    this.setState({
+      desks: desks
+    })
+  };
 
   moveDesk = (dragIndex, hoverIndex) => {
-		const { desks } = this.state
-    const dragDesk = desks[dragIndex]
+		const { desks } = this.state;
+    const dragDesk = desks[dragIndex];
 
 		this.setState(
 			update(this.state, {
@@ -29,78 +48,82 @@ class Table extends Component {
 					$splice: [[dragIndex, 1], [hoverIndex, 0, dragDesk]],
 				}
 			}),
-		)
-  }
+		);
+  };
 
   moveTask = (taskIndex, deskIndex, hoverTaskIndex, draggedTask) => {
-    const desks = JSON.parse(JSON.stringify(this.state.desks))
+    const desks = JSON.parse(JSON.stringify(this.state.desks));
 
     function returnTask (desks, draggedTask) {
       let searchedTask;
       desks.forEach(desk => {
         desk.tasks.forEach(task => {
           if (task.id === draggedTask.id) {
-            searchedTask = task
-          }
+            searchedTask = task;
+          };
         })
-      })
-      return searchedTask
-    }
+      });
+      return searchedTask;
+    };
 
-    const dragTask = returnTask(desks, draggedTask) 
+    const dragTask = returnTask(desks, draggedTask);
+
+    desks.map(desk => {
+      const newTasks = [];
+
+      desk.tasks.filter(task => {
+        if (task.id !== dragTask.id) {
+          newTasks.push(task)
+        }
+        return null;
+      });
+      desk.tasks = newTasks;
+      return desk;
+    });
 
     if (hoverTaskIndex === null && (!desks[deskIndex].tasks || desks[deskIndex].tasks.length === 0)) {
-      desks[deskIndex].tasks = [dragTask]
+      desks[deskIndex].tasks = [dragTask];
     } else {
-      desks.map(desk => {
-        const newTasks = []
-        desk.tasks.filter(task => {
-          if (task.id !== dragTask.id) {
-            newTasks.push(task)
-          }
-          return null
-        })
-        desk.tasks = newTasks
-        return desk
-      })
-      dragTask && desks[deskIndex].tasks.splice(hoverTaskIndex, 0, dragTask)
-    }
+      dragTask && desks[deskIndex].tasks.splice(hoverTaskIndex, 0, dragTask);
+    };
 
 		this.setState({
       desks: desks
-    })
+    });
   }
 
   componentDidMount() {
-    const desks = JSON.parse(window.localStorage.getItem('desks'))
+    const desks = JSON.parse(window.localStorage.getItem('desks'));
+
     if (!desks) {
       this.props.fetchDesksFunction()
     } else {
       this.setState({
         desks: desks
-      })
+      });
     }
-  }
+  };
 
   componentDidUpdate(prevProps, prevState) {
     if (this.props.desks) {
       if (this.props.desks !== prevProps.desks) {
-        window.localStorage.setItem('desks', JSON.stringify(this.props.desks))
+        window.localStorage.setItem('desks', JSON.stringify(this.props.desks));
         this.setState({
           desks: this.props.desks
-        })
-      }
-    }
+        });
+      };
+    };
+
     if(this.state.desks) {
       if (this.state.desks !== prevState.desks) {
-        window.localStorage.setItem('desks', JSON.stringify(this.state.desks))
-      }
-    }
-  }
+        window.localStorage.setItem('desks', JSON.stringify(this.state.desks));
+      };
+    };
+  };
 
   render() {
-    const { desks } = this.state
-    console.log()
+    const { desks } = this.state;
+
     return (
       <React.Fragment>
         <h3>Table</h3>
@@ -113,21 +136,22 @@ class Table extends Component {
                 deskIndex={idx}
                 id={desk.id}
                 desk={desk}
-                moveDesk={this.moveDesk} 
-                moveTask={this.moveTask}/>
+                moveDesk={this.moveDesk}
+                moveTask={this.moveTask}
+                onChangeTask={this.onChangeTask}/>
             )
           })}
         </div>
       </React.Fragment>
     );
-  }
-}
+  };
+};
     
 const mapStateToProps = state => {
   return {
     desks: state.deskReducer.desks
   }
-}
+};
 
 const mapDispatchToProps = dispatch => {
   return {
@@ -135,7 +159,7 @@ const mapDispatchToProps = dispatch => {
       return dispatch(fetchDesksAction())
     }
   }
-}
+};
 
-Table = DragDropContext(HTML5Backend)(Table)
-export default connect(mapStateToProps, mapDispatchToProps)(Table)
+Table = DragDropContext(HTML5Backend)(Table);
+export default connect(mapStateToProps, mapDispatchToProps)(Table);

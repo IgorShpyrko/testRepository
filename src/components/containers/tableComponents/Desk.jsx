@@ -72,7 +72,7 @@ const styles = {
 
 class Desk extends React.Component {
 	render() {
-    const { desk, isDragging, connectDragSource, connectDropTarget, deskIndex, moveTask } = this.props
+    const { desk, onChangeTask, isDragging, connectDragSource, connectDropTarget, deskIndex, moveTask } = this.props
 		const opacity = isDragging ? 0 : 1
 
 		return (
@@ -93,6 +93,7 @@ class Desk extends React.Component {
 												taskIndex={idx}
 												deskIndex={deskIndex}
 												moveTask={moveTask}
+												onChangeTask={onChangeTask}
 											/>
 										)
 									})}

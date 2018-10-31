@@ -1,16 +1,7 @@
 import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import flow from 'lodash.flow';
-import {
-	DragSource,
-	DropTarget/* ,
-	ConnectDropTarget,
-	ConnectDragSource,
-	DropTargetMonitor,
-	DropTargetConnector,
-	DragSourceConnector,
-	DragSourceMonitor */
-} from 'react-dnd';
+import { DragSource, DropTarget } from 'react-dnd';
 
 const taskDragSource = {
 	beginDrag(props) {
@@ -23,62 +14,32 @@ const taskDragSource = {
 }
 
 const taskDropTarget = {
-	
 	hover(props, monitor, component) {
-		// if (!component) {
-		// 	return null
-		// }
-		const taskIndex = monitor.getItem().taskIndex
-		const hoverTaskIndex = props.taskIndex
+		const taskIndex = monitor.getItem().taskIndex;
+		const hoverTaskIndex = props.taskIndex;
 
-		// Don't replace items with themselves
-		if (taskIndex === hoverTaskIndex) {
-			return
-		}
+		if (taskIndex === hoverTaskIndex) return;
 
-		// Determine rectangle on screen
 		const hoverBoundingRect = (findDOMNode(
 			component,
-    )).getBoundingClientRect()	
+		)).getBoundingClientRect();
+		
+		const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+    const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
+		const clientOffset = monitor.getClientOffset();
+    const hoverClientY = (clientOffset).y - hoverBoundingRect.top;
+    const hoverClientX = (clientOffset).x - hoverBoundingRect.left;
 
-		// Get vertical middle
-		const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
-
-    // Get horizontal middle
-    const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2
-
-		// Determine mouse position
-		const clientOffset = monitor.getClientOffset()
-
-		// Get pixels to the top
-    const hoverClientY = (clientOffset).y - hoverBoundingRect.top
-    
-    // Get pixels to the left
-    const hoverClientX = (clientOffset).x - hoverBoundingRect.left
-
-		// Dragging downwards
 		if (taskIndex < hoverTaskIndex && hoverClientY < hoverMiddleY) {
       if (hoverClientX < hoverMiddleX) {
         return
       }
-		}
+		};
 
-		// Dragging upwards
-		if (taskIndex > hoverTaskIndex && hoverClientY > hoverMiddleY) {
-      // if (hoverClientX > hoverMiddleX) {
-        return
-      // }
-		}
-
-		// Time to actually perform the action
-		const draggedTask = monitor.getItem()
-		props.moveTask(taskIndex, props.deskIndex, hoverTaskIndex, draggedTask)
-
-		// Note: we're mutating the monitor item here!
-		// Generally it's better to avoid mutations,
-		// but it's good here for the sake of performance
-		// to avoid expensive index searches.
-		monitor.getItem().taskIndex = hoverTaskIndex
+		if (taskIndex > hoverTaskIndex && hoverClientY > hoverMiddleY) return;
+		const draggedTask = monitor.getItem();
+		props.moveTask(taskIndex, props.deskIndex, hoverTaskIndex, draggedTask);
+		monitor.getItem().taskIndex = hoverTaskIndex;
 	},
 }
 
@@ -87,7 +48,6 @@ class Task extends Component {
   render() {
     const {
       task,
-			// isDragging,
 			connectDragSource,
 			connectDropTarget,
     } = this.props

@@ -4,10 +4,9 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
 
 import { fetchDesksAction } from '../../actions/desks';
-import Desk from './tableComponents/Desk'
+import Desk from './tableComponents/Desk';
 
 const update = require('immutability-helper');
-
 const styles = {
   desksWrapper: {
     display: 'flex',
@@ -21,7 +20,6 @@ class Table extends Component {
   }
 
   moveDesk = (dragIndex, hoverIndex) => {
-
 		const { desks } = this.state
     const dragDesk = desks[dragIndex]
 
@@ -51,7 +49,7 @@ class Table extends Component {
 
     const dragTask = returnTask(desks, draggedTask) 
 
-    if (hoverTaskIndex === null && !desks[deskIndex].tasks) {
+    if (hoverTaskIndex === null && (!desks[deskIndex].tasks || desks[deskIndex].tasks.length === 0)) {
       desks[deskIndex].tasks = [dragTask]
     } else {
       desks.map(desk => {
@@ -67,7 +65,6 @@ class Table extends Component {
       })
       dragTask && desks[deskIndex].tasks.splice(hoverTaskIndex, 0, dragTask)
     }
-
 
 		this.setState({
       desks: desks
@@ -139,5 +136,6 @@ const mapDispatchToProps = dispatch => {
     }
   }
 }
+
 Table = DragDropContext(HTML5Backend)(Table)
 export default connect(mapStateToProps, mapDispatchToProps)(Table)

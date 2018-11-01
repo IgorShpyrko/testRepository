@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
+import './Footer.css';
 
 export default class Footer extends Component {
-  state = {  }
+  state = {  };
   render() {
     return (
-      <div className="footer">
+      <div className='footer'>
         <h3>Footer</h3>
       </div>
     );
-  }
-}
+  };
+};

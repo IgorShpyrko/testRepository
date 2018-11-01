@@ -1,0 +1,7 @@
+.header {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.header > h3 {
+  margin: 0
+}

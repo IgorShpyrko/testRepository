@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import flow from 'lodash.flow';
 import { DragSource, DropTarget } from 'react-dnd';
+import './Task.css';
 
 const taskDragSource = {
 	beginDrag(props) {
@@ -11,7 +12,7 @@ const taskDragSource = {
 			taskParent: props.deskIndex
 		}
 	}
-}
+};
 
 const taskDropTarget = {
 	hover(props, monitor, component) {
@@ -41,53 +42,46 @@ const taskDropTarget = {
 		props.moveTask(taskIndex, props.deskIndex, hoverTaskIndex, draggedTask);
 		monitor.getItem().taskIndex = hoverTaskIndex;
 	},
-}
-
-const styles = {
-	taskWrapper: {
-		display: 'flex',
-		justifyContent: 'space-between'
-	}
-}
+};
 
 class Task extends Component {
 	state = {
 		value: '',
 		edit: false,
 		prevValue: ''
-	}
+	};
 
 	handleChange = e => {
 		this.setState({
 			value: e.target.value
-		})
-	}
+		});
+	};
 
-	handleCancel = () => {
+	handleCancelChangeTask = () => {
 		this.setState({
 			edit: false,
 			value: this.state.prevValue,
 			prevValue: ''
-		})
-	}
+		});
+	};
 
-	handleApply = (value, id) => {
-		this.props.onChangeTask(value, id)
+	handleApplyChangeTask = (value, id) => {
+		this.props.handleChangeTask(value, id);
 		this.setState({
 			edit: false,
 			prevValue: ''
-		})
-	}
+		});
+	};
 
 	handleKeyPress = (e, task) => {
 		if (e.keyCode === 27) {
-			this.handleCancel()
+			this.handleCancelChangeTask()
 			return
-		}
+		};
 		if (e.keyCode === 13) {
-			this.handleApply(this.state.value, task.id)
-		}
-	}
+			this.handleApplyChangeTask(this.state.value, task.id)
+		};
+	};
 	
 	onClickTask = (e, task) => {
 		this.setState(prevState => {
@@ -95,23 +89,23 @@ class Task extends Component {
 				edit: true,
 				value: '',
 				prevValue: prevState.value
-			}
-		})
-	}
+			};
+		});
+	};
 
 	componentDidMount() {
 		this.setState({
 			value: this.props.task.value
-		})
-	}
+		});
+	};
 
 	componentDidUpdate(prevProps) {
 		if (prevProps.task.value !== this.props.task.value) {
 			this.setState({
 				value: this.props.task.value
-			})
-		}
-	}
+			});
+		};
+	};
 
   render() {
 		const { task, isDragging, connectDragSource, connectDropTarget, handleRemoveTask, deskIndex } = this.props
@@ -121,28 +115,28 @@ class Task extends Component {
 			connectDropTarget &&
 			connectDragSource(
 				connectDropTarget(
-					<div className="task-wparrer" style={styles.taskWrapper}>
-						<div className="task" onClick={ e => {!isDragging && this.onClickTask(e, task)} }>
+					<div className='task-wparrer'>
+						<div className='task' onClick={ e => {!isDragging && this.onClickTask(e, task)} }>
 							{!edit
-								? <span>{this.state.value}</span>
+								? <span className='task-value'>{this.state.value}</span>
 								: <input 
 										autoFocus
 										value={this.state.value}
 										onChange={this.handleChange}
-										onBlur={this.handleCancel}
+										onBlur={this.handleCancelChangeTask}
 										onKeyDown={ e => {this.handleKeyPress(e, task)} }
 									/>
 							}
 						</div>
-						<span onClick={() => handleRemoveTask(task, deskIndex)}>
+						<span className='delete-task' onClick={() => handleRemoveTask(task, deskIndex)}>
 							&#x2715;
 						</span>
           </div>
       )
 			)
 		);
-  }
-}
+  };
+};
 
 export default flow(
   DragSource(

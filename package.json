@@ -26,6 +26,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "css-loader": "^1.0.1",
     "lodash.flow": "^3.5.0",
     "react-dnd": "^5.0.0",
     "react-redux": "^5.1.0",

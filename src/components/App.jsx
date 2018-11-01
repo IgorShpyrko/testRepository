@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import Header from './containers/Header';
-import Table from './containers/Table';
-import Footer from './containers/Footer';
+import Header from './containers/Header/Header';
+import Table from './containers/Table/Table';
+import Footer from './containers/Footer/Footer';
 
 export default class App extends Component {
   state = {  }

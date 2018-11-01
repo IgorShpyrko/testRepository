@@ -3,17 +3,12 @@ import { connect } from 'react-redux';
 import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
 
-import { fetchDesksAction } from '../../actions/desks';
-import Desk from './tableComponents/Desk';
+import './Table.css';
+
+import { fetchDesksAction } from '../../../actions/desks';
+import Desk from './tableComponents/Desk/Desk';
 
 const update = require('immutability-helper');
-const styles = {
-  desksWrapper: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'flex-start'
-  }
-}
 
 function recursiveDeepCopy(o) {
   let newO;
@@ -42,6 +37,59 @@ function recursiveDeepCopy(o) {
 class Table extends Component {
   state = { 
     desks: null
+  };
+  
+  handleDeleteDesk = (deletedDesk) => {
+    const { desks } = this.state;
+
+    const newDesks = desks.filter(desk => {
+      if (desk.id !== deletedDesk.id) {
+        return desk
+      } else {
+        return null
+      }
+    });
+
+    this.setState({
+      desks: newDesks
+    })
+  }
+
+  handleAddDesk = () => {
+    const { desks } = this.state;
+    let maxDeskId = 0;
+
+    desks.forEach(desk => {
+      if (maxDeskId < desk.id) {
+        maxDeskId = desk.id
+      };
+    });
+
+    let newDesk = {
+      id: maxDeskId + 1,
+      name: `new Desk`,
+      tasks: []
+    };
+
+    this.setState({
+      desks: [
+        ...desks,
+        newDesk
+      ]
+    })
+  }
+
+  moveDesk = (dragIndex, hoverIndex) => {
+		const { desks } = this.state;
+    const dragDesk = desks[dragIndex];
+
+		this.setState(
+			update(this.state, {
+				desks: {
+					$splice: [[dragIndex, 1], [hoverIndex, 0, dragDesk]],
+				}
+			}),
+		);
   };
 
   handleRemoveTask = (taskToDelete, deskIndex) => {
@@ -77,19 +125,23 @@ class Table extends Component {
     
     let newTask = {
       id: `${currentDesk.id}_${maxExistingId + 1}`,
-      value: 'new Value'
+      value: 'new Task'
     };
 
     let newDesks = recursiveDeepCopy(desks);
 
-    newDesks[currentDesk.id - 1].tasks = newDesks[currentDesk.id - 1].tasks.concat([newTask]);
+    newDesks.forEach(desk => {
+      if (desk.id === currentDesk.id) {
+        desk.tasks = desk.tasks.concat([newTask])
+      }
+    })
 
     this.setState({
       desks: newDesks
     });
   };
 
-  onChangeTask = (taskNewValue, taskId) => {
+  handleChangeTask = (taskNewValue, taskId) => {
     const desks = recursiveDeepCopy(this.state.desks);
 
     desks.forEach(desk => {
@@ -103,19 +155,6 @@ class Table extends Component {
     this.setState({
       desks: desks
     })
-  };
-
-  moveDesk = (dragIndex, hoverIndex) => {
-		const { desks } = this.state;
-    const dragDesk = desks[dragIndex];
-
-		this.setState(
-			update(this.state, {
-				desks: {
-					$splice: [[dragIndex, 1], [hoverIndex, 0, dragDesk]],
-				}
-			}),
-		);
   };
 
   moveTask = (taskIndex, deskIndex, hoverTaskIndex, draggedTask) => {
@@ -194,8 +233,8 @@ class Table extends Component {
     return (
       <React.Fragment>
         <h3>Table</h3>
-        <hr />
-        <div className='desks-wrapper' style={styles.desksWrapper}>
+        <hr style={{margin: 0}}/>
+        <div className='desks-wrapper'>
           {desks && desks.map((desk, idx) => {
             return (
               <Desk
@@ -207,9 +246,13 @@ class Table extends Component {
                 moveTask={this.moveTask}
                 handleAddTask={this.handleAddTask}
                 handleRemoveTask={this.handleRemoveTask}
-                onChangeTask={this.onChangeTask}/>
+                handleDeleteDesk={this.handleDeleteDesk}
+                handleChangeTask={this.handleChangeTask}/>
             )
           })}
+          <div className='add-desk' onClick={this.handleAddDesk}>
+            <span>Click to add desk</span>
+          </div>
         </div>
       </React.Fragment>
     );

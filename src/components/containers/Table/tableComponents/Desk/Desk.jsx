@@ -6,7 +6,10 @@ import {
 	DropTarget,
 } from 'react-dnd';
 
-import Task from './Task';
+import Task from '../Task/Task';
+import DeskModal from '../DeskModal/DeskModal';
+
+import './Desk.css';
 
 const deskDragSource = {
 	beginDrag(props) {
@@ -62,49 +65,52 @@ const deskDropTarget = {
 	}
 }
 
-const styles = {
-  deskItemWrapper: {
-    border: '1px dashed black',
-    margin: '5px',
-    width: '200px'
-	},
-	deskItemContainer: {
-		display: 'flex',
-		flexDirection: 'column',
-		justifyContent: 'space-between'
-	},
-	addTaskWrapper: {
-		display: 'flex',
-		justifyContent: 'space-between',
-		padding: '5px',
-		backgroundColor: 'rgba(100, 100, 100, 0.7)'
-	}
-};
-
 class Desk extends React.Component {
+	state = {
+		isModalOpened: false
+	};
+
+	openModal = (desk) => {
+		this.setState({
+			isModalOpened: true
+		});
+	};
+
+	closeModal = (desk) => {
+		this.setState({
+			isModalOpened: false
+		});
+	};
+
 	render() {
     const {
 			desk,
-			onChangeTask,
+			handleChangeTask,
 			isDragging,
 			connectDragSource,
 			connectDropTarget,
 			deskIndex,
 			moveTask,
 			handleAddTask,
-			handleRemoveTask
-		} = this.props
-		const opacity = isDragging ? 0 : 1
+			handleRemoveTask,
+			handleDeleteDesk
+		} = this.props;
+
+		const opacity = isDragging ? 0.5 : 1;
 
 		return (
 			connectDragSource &&
 			connectDropTarget &&
 			connectDragSource(
 				connectDropTarget(
-					<div className="desk-item-wrapper" style={{ opacity, ...styles.deskItemWrapper }}>
-						<div className="desk-item" style={styles.deskItemContainer}>
-							<h4>{desk.name}</h4>
-							<div className="tasks">
+					<div className='desk-item-wrapper' style={{opacity}}>
+						{this.state.isModalOpened && <DeskModal desk={desk} closeModal={this.closeModal} deleteDesk={handleDeleteDesk}/>}
+						<div className='desk-item'>
+							<div className='header-wrapper'>
+								<h3>{desk.name}</h3>
+								<span onClick={this.openModal}>&hellip;</span>
+							</div>
+							<div className='tasks'>
 								{desk.tasks && desk.tasks.map((task, idx) => {
 									return (
 										<Task 
@@ -114,15 +120,15 @@ class Desk extends React.Component {
 											taskIndex={idx}
 											deskIndex={deskIndex}
 											moveTask={moveTask}
-											onChangeTask={onChangeTask}
+											handleChangeTask={handleChangeTask}
 											handleRemoveTask={handleRemoveTask}
 										/>
 									)
 								})}
 							</div>
-							<div className="add-task" style={styles.addTaskWrapper} onClick={() => handleAddTask(desk)}>
-								<span>Add task</span>
-								<span>+</span>
+							<div className='add-task-wrapper' onClick={() => handleAddTask(desk)}>
+								<span className='add-task-title'>Add task</span>
+								<span className='add-task-icon'>+</span>
 							</div>
 						</div>
 					</div>

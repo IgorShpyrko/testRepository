@@ -1,0 +1,48 @@
+.desk-item-wrapper {
+  border: 1px dashed black;
+  margin: 5px;
+  width: 200px;
+  border-radius: 15px;
+}
+
+.desk-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 15px;
+}
+
+.header-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top-left-radius: 15px; 
+  border-top-right-radius: 15px; 
+}
+
+.header-wrapper > h3 {
+  margin-left: 10px;
+}
+
+.header-wrapper > span {
+  margin-right: 10px;
+}
+
+.header-wrapper > span:hover {
+  cursor: pointer;
+}
+
+.add-task-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding: 5px;
+  background-color: rgba(100, 100, 100, 0.7);
+  border-bottom-left-radius: 15px; 
+  border-bottom-right-radius: 15px; 
+}
+
+.add-task-title:hover {
+  cursor: pointer;
+}

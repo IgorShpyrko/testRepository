@@ -67,12 +67,33 @@ const styles = {
     border: '1px dashed black',
     margin: '5px',
     width: '200px'
-  }
+	},
+	deskItemContainer: {
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'space-between'
+	},
+	addTaskWrapper: {
+		display: 'flex',
+		justifyContent: 'space-between',
+		padding: '5px',
+		backgroundColor: 'rgba(100, 100, 100, 0.7)'
+	}
 };
 
 class Desk extends React.Component {
 	render() {
-    const { desk, onChangeTask, isDragging, connectDragSource, connectDropTarget, deskIndex, moveTask } = this.props
+    const {
+			desk,
+			onChangeTask,
+			isDragging,
+			connectDragSource,
+			connectDropTarget,
+			deskIndex,
+			moveTask,
+			handleAddTask,
+			handleRemoveTask
+		} = this.props
 		const opacity = isDragging ? 0 : 1
 
 		return (
@@ -81,24 +102,29 @@ class Desk extends React.Component {
 			connectDragSource(
 				connectDropTarget(
 					<div className="desk-item-wrapper" style={{ opacity, ...styles.deskItemWrapper }}>
-						<div className="desk-item">
-								<h4>{desk.name}</h4>
-								<div className="tasks">
-									{desk.tasks && desk.tasks.map((task, idx) => {
-										return (
-											<Task 
-												key={task.id}
-												id={task.id}
-												task={task}
-												taskIndex={idx}
-												deskIndex={deskIndex}
-												moveTask={moveTask}
-												onChangeTask={onChangeTask}
-											/>
-										)
-									})}
-								</div>
+						<div className="desk-item" style={styles.deskItemContainer}>
+							<h4>{desk.name}</h4>
+							<div className="tasks">
+								{desk.tasks && desk.tasks.map((task, idx) => {
+									return (
+										<Task 
+											key={task.id}
+											id={task.id}
+											task={task}
+											taskIndex={idx}
+											deskIndex={deskIndex}
+											moveTask={moveTask}
+											onChangeTask={onChangeTask}
+											handleRemoveTask={handleRemoveTask}
+										/>
+									)
+								})}
 							</div>
+							<div className="add-task" style={styles.addTaskWrapper} onClick={() => handleAddTask(desk)}>
+								<span>Add task</span>
+								<span>+</span>
+							</div>
+						</div>
 					</div>
 				),
 			)

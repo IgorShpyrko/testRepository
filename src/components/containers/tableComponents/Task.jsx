@@ -43,6 +43,13 @@ const taskDropTarget = {
 	},
 }
 
+const styles = {
+	taskWrapper: {
+		display: 'flex',
+		justifyContent: 'space-between'
+	}
+}
+
 class Task extends Component {
 	state = {
 		value: '',
@@ -86,6 +93,7 @@ class Task extends Component {
 		this.setState(prevState => {
 			return {
 				edit: true,
+				value: '',
 				prevValue: prevState.value
 			}
 		})
@@ -106,24 +114,29 @@ class Task extends Component {
 	}
 
   render() {
-		const { task, isDragging, connectDragSource, connectDropTarget, } = this.props
+		const { task, isDragging, connectDragSource, connectDropTarget, handleRemoveTask, deskIndex } = this.props
 		const { edit } = this.state
     return (
 			connectDragSource &&
 			connectDropTarget &&
 			connectDragSource(
 				connectDropTarget(
-          <div className="task" onClick={ e => {!isDragging && this.onClickTask(e, task)} }>
-						{!edit
-							? this.state.value
-							: <input 
-									autoFocus
-									value={this.state.value}
-									onChange={this.handleChange}
-									onBlur={this.handleCancel}
-									onKeyDown={ e => {this.handleKeyPress(e, task)} }
-								/>
-						}
+					<div className="task-wparrer" style={styles.taskWrapper}>
+						<div className="task" onClick={ e => {!isDragging && this.onClickTask(e, task)} }>
+							{!edit
+								? <span>{this.state.value}</span>
+								: <input 
+										autoFocus
+										value={this.state.value}
+										onChange={this.handleChange}
+										onBlur={this.handleCancel}
+										onKeyDown={ e => {this.handleKeyPress(e, task)} }
+									/>
+							}
+						</div>
+						<span onClick={() => handleRemoveTask(task, deskIndex)}>
+							&#x2715;
+						</span>
           </div>
       )
 			)

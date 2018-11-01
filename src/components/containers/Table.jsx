@@ -10,8 +10,33 @@ const update = require('immutability-helper');
 const styles = {
   desksWrapper: {
     display: 'flex',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    alignItems: 'flex-start'
   }
+}
+
+function recursiveDeepCopy(o) {
+  let newO;
+  let i;
+
+  if (typeof o !== 'object') return o;
+  if (!o) return o;
+
+  if ('[object Array]' === Object.prototype.toString.apply(o)) {
+    newO = [];
+    for (i = 0; i < o.length; i += 1) {
+      newO[i] = recursiveDeepCopy(o[i]);
+    }
+    return newO;
+  }
+
+  newO = {};
+  for (i in o) {
+    if (o.hasOwnProperty(i)) {
+      newO[i] = recursiveDeepCopy(o[i]);
+    }
+  }
+  return newO;
 }
 
 class Table extends Component {
@@ -19,14 +44,56 @@ class Table extends Component {
     desks: null
   };
 
-  onChangeTask = (taskNewValue, taskId) => {
-    // console.log(taskNewValue);
-    // console.log(taskId);
+  handleRemoveTask = (taskToDelete, deskIndex) => {
+    const { desks } = this.state;
+    let newDesks = recursiveDeepCopy(desks);
 
-    const desks = JSON.parse(JSON.stringify(this.state.desks));
+    newDesks[deskIndex].tasks = newDesks[deskIndex].tasks.filter(task => {
+      if (taskToDelete.id !== task.id) {
+        return task
+      } else {
+        return null
+      }
+    })
+
+    this.setState({
+      desks: newDesks
+    })
+  }
+
+  handleAddTask = (currentDesk) => {
+    const { desks } = this.state;
+    let maxExistingId = 0;
+    
+    desks.forEach(desk => {
+      desk.tasks && desk.tasks.forEach(task => {
+        if (+task.id.split('_')[0] === currentDesk.id) {
+          if (maxExistingId < +task.id.split('_')[1]) {
+            maxExistingId = +task.id.split('_')[1]
+          }
+        };
+      });
+    });
+    
+    let newTask = {
+      id: `${currentDesk.id}_${maxExistingId + 1}`,
+      value: 'new Value'
+    };
+
+    let newDesks = recursiveDeepCopy(desks);
+
+    newDesks[currentDesk.id - 1].tasks = newDesks[currentDesk.id - 1].tasks.concat([newTask]);
+
+    this.setState({
+      desks: newDesks
+    });
+  };
+
+  onChangeTask = (taskNewValue, taskId) => {
+    const desks = recursiveDeepCopy(this.state.desks);
 
     desks.forEach(desk => {
-      desk.tasks.forEach(task => {
+      desk.tasks && desk.tasks.forEach(task => {
         if (task.id === taskId) {
           task.value = taskNewValue
         }
@@ -52,7 +119,7 @@ class Table extends Component {
   };
 
   moveTask = (taskIndex, deskIndex, hoverTaskIndex, draggedTask) => {
-    const desks = JSON.parse(JSON.stringify(this.state.desks));
+    const desks = recursiveDeepCopy(this.state.desks);
 
     function returnTask (desks, draggedTask) {
       let searchedTask;
@@ -138,6 +205,8 @@ class Table extends Component {
                 desk={desk}
                 moveDesk={this.moveDesk}
                 moveTask={this.moveTask}
+                handleAddTask={this.handleAddTask}
+                handleRemoveTask={this.handleRemoveTask}
                 onChangeTask={this.onChangeTask}/>
             )
           })}

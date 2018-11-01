@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { Component } from 'react';
 import { findDOMNode } from 'react-dom';
 import flow from 'lodash.flow';
 import {
@@ -65,7 +65,7 @@ const deskDropTarget = {
 	}
 }
 
-class Desk extends React.Component {
+class Desk extends Component {
 	state = {
 		isModalOpened: false
 	};
@@ -114,7 +114,7 @@ class Desk extends React.Component {
 								{desk.tasks && desk.tasks.map((task, idx) => {
 									return (
 										<Task 
-											key={task.id}
+											key={idx}
 											id={task.id}
 											task={task}
 											taskIndex={idx}

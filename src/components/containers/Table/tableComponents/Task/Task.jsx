@@ -75,11 +75,16 @@ class Task extends Component {
 
 	handleKeyPress = (e, task) => {
 		if (e.keyCode === 27) {
-			this.handleCancelChangeTask()
-			return
+			this.handleCancelChangeTask();
+			return;
 		};
+		
 		if (e.keyCode === 13) {
-			this.handleApplyChangeTask(this.state.value, task.id)
+			if (e.target.value.trim() === '') {
+				this.handleCancelChangeTask();
+				return;
+			};
+			this.handleApplyChangeTask(this.state.value, task.id);
 		};
 	};
 	
@@ -87,7 +92,6 @@ class Task extends Component {
 		this.setState(prevState => {
 			return {
 				edit: true,
-				value: '',
 				prevValue: prevState.value
 			};
 		});
@@ -108,14 +112,17 @@ class Task extends Component {
 	};
 
   render() {
-		const { task, isDragging, connectDragSource, connectDropTarget, handleRemoveTask, deskIndex } = this.props
-		const { edit } = this.state
-    return (
+		const { task, isDragging, connectDragSource, connectDropTarget, handleRemoveTask, deskIndex } = this.props;
+		const { edit } = this.state;
+
+		const wrapperClassName = isDragging ? 'task-wrapper tw-dragging' : 'task-wrapper';
+
+		return (
 			connectDragSource &&
 			connectDropTarget &&
 			connectDragSource(
 				connectDropTarget(
-					<div className='task-wparrer'>
+					<div className={wrapperClassName}>
 						<div className='task' onClick={ e => {!isDragging && this.onClickTask(e, task)} }>
 							{!edit
 								? <span className='task-value'>{this.state.value}</span>
@@ -132,7 +139,7 @@ class Task extends Component {
 							&#x2715;
 						</span>
           </div>
-      )
+      	)
 			)
 		);
   };
@@ -144,7 +151,7 @@ export default flow(
     taskDragSource,
     (connect, monitor) => ({
       connectDragSource: connect.dragSource(),
-      isDragging: monitor.isDragging(),
+			isDragging: monitor.isDragging()
     }),
   ),
   DropTarget(

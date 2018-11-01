@@ -23,10 +23,12 @@
 
 .modal-container > div {
   background-color: rgba(0,0,0,0.5);
+  transition: background-color 200ms ease;
   padding: 10px;
 }
 
 .modal-container > div:hover {
   cursor: pointer;
-  background-color: rgba(0,0,0,0.3)
+  background-color: rgba(0,0,0,0.3);
+  transition: background-color 500ms ease;
 }

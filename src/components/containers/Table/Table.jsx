@@ -32,7 +32,7 @@ function recursiveDeepCopy(o) {
     }
   }
   return newO;
-}
+};
 
 class Table extends Component {
   state = { 
@@ -52,8 +52,8 @@ class Table extends Component {
 
     this.setState({
       desks: newDesks
-    })
-  }
+    });
+  };
 
   handleAddDesk = () => {
     const { desks } = this.state;
@@ -76,8 +76,8 @@ class Table extends Component {
         ...desks,
         newDesk
       ]
-    })
-  }
+    });
+  };
 
   moveDesk = (dragIndex, hoverIndex) => {
 		const { desks } = this.state;
@@ -238,7 +238,7 @@ class Table extends Component {
           {desks && desks.map((desk, idx) => {
             return (
               <Desk
-                key={desk.id}
+                key={idx}
                 deskIndex={idx}
                 id={desk.id}
                 desk={desk}

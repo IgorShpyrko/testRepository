@@ -34,6 +34,7 @@ export default class Modal extends Component {
         {this.props.children}
         <h3>Some staff Here</h3>
         <div onClick={() => deleteDesk(desk)}>Delete desk</div>
+        <div onClick={this.props.closeModal}>Close Modal</div>
       </div>,
       this.el,
     );

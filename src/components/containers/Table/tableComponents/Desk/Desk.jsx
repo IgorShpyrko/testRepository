@@ -22,12 +22,15 @@ const deskDragSource = {
 
 const deskDropTarget = {
 	hover(props, monitor, component) {
+
 		if (!component) return null;
 
 		if (monitor.getItemType() === 'desk') {
+			console.log('props', props)
 			const dragIndex = monitor.getItem().deskIndex;
+			// console.log('dragIndex :', dragIndex);
 			const hoverIndex = props.deskIndex;
-
+			// console.log('hoverIndex :', hoverIndex);
 			if (dragIndex === hoverIndex) return;
 
 			const hoverBoundingRect = (findDOMNode(
@@ -57,10 +60,14 @@ const deskDropTarget = {
 		};
 
 		if (monitor.getItemType() === 'task') {
-			if (!props.desk.tasks || props.desk.tasks.length === 0) {
-				const item = monitor.getItem()
-				props.moveTask(null, props.deskIndex, null, item)
-			};
+
+			const hoverDeskIndex = props.deskIndex;
+			console.log('hoverDeskIndex :', hoverDeskIndex);
+
+			const dragTaskIndex = monitor.getItem().taskIndex;
+			console.log('dragTaskIndex :', dragTaskIndex);
+
+			props.moveTask(hoverDeskIndex, dragTaskIndex)
 		};
 	}
 }

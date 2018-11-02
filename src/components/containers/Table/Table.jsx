@@ -86,11 +86,18 @@ class Table extends Component {
 		this.setState(
 			update(this.state, {
 				desks: {
-					$splice: [[dragIndex, 1], [hoverIndex, 0, dragDesk]],
+					$splice: [
+            [dragIndex, 1],
+            [hoverIndex, 0, dragDesk]
+          ],
 				}
 			}),
 		);
   };
+
+
+  
+
 
   handleRemoveTask = (taskToDelete, deskIndex) => {
     const { desks } = this.state;
@@ -157,45 +164,30 @@ class Table extends Component {
     })
   };
 
-  moveTask = (taskIndex, deskIndex, hoverTaskIndex, draggedTask) => {
-    const desks = recursiveDeepCopy(this.state.desks);
+  moveTask = (hoverDeskIndex, dragTaskIndex) => {
+    const { desks } = this.state;
+    const dragTask = desks[hoverDeskIndex].tasks[dragTaskIndex];
 
-    function returnTask (desks, draggedTask) {
-      let searchedTask;
-      desks.forEach(desk => {
-        desk.tasks.forEach(task => {
-          if (task.id === draggedTask.id) {
-            searchedTask = task;
-          };
-        })
-      });
-      return searchedTask;
-    };
-
-    const dragTask = returnTask(desks, draggedTask);
-
-    desks.map(desk => {
-      const newTasks = [];
-
-      desk.tasks.filter(task => {
-        if (task.id !== dragTask.id) {
-          newTasks.push(task)
-        }
-        return null;
-      });
-      desk.tasks = newTasks;
-      return desk;
-    });
-
-    if (hoverTaskIndex === null && (!desks[deskIndex].tasks || desks[deskIndex].tasks.length === 0)) {
-      desks[deskIndex].tasks = [dragTask];
-    } else {
-      dragTask && desks[deskIndex].tasks.splice(hoverTaskIndex, 0, dragTask);
-    };
-
-		this.setState({
-      desks: desks
-    });
+    // this.setState(
+		// 	update(
+    //     this.state, 
+    //     desks,
+    //     {
+    //       [dragFromDeskIndex]: {
+    //         tasks: {
+    //           $splice: [dragTaskIndex, 1]
+    //         }
+    //       }
+    //     },
+    //     {
+    //       [hoverDeskIndex]: {
+    //         tasks: {
+    //           $splice: [hoverTaskIndex, 0, dragTask]
+    //         }
+    //       }
+    //     }
+		// 	),
+		// );
   }
 
   componentDidMount() {

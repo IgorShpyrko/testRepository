@@ -25,9 +25,7 @@ const taskDropTarget = {
 		const hoverDeskIndex = props.deskIndex;
 		const dragFromDeskIndex = draggedTask.taskParent;
 		
-		if (props.task && props.task.length !== 0) {
 			props.moveTask(hoverDeskIndex, dragTaskIndex, dragFromDeskIndex, hoverTaskIndex);
-		}
 		monitor.getItem().taskIndex = hoverTaskIndex;
 	},
 };

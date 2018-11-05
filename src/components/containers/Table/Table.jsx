@@ -140,6 +140,33 @@ class Table extends Component {
     this.setState({
       prevDesk: null
     });
+  };
+
+  moveTaskToNewDesk = (hoverDeskIndex, dragTaskIndex, dragFromDeskIndex) => {
+    const { desks } = this.state;
+    if (desks[hoverDeskIndex].tasks && (desks[hoverDeskIndex].tasks.length !== 0)) return
+
+    const dragTask = desks[dragFromDeskIndex].tasks[dragTaskIndex];
+
+    this.setState(
+      update(this.state, {
+        prevDesk: {$set: hoverDeskIndex},
+        desks:
+          {
+            [hoverDeskIndex]: {
+              tasks: {
+                $push: [dragTask]
+              }
+            },
+            [dragFromDeskIndex]: {
+              tasks: {
+                $splice: [[dragTaskIndex, 1]]
+              }
+            }
+          }
+        }
+      ),
+    );
   }
 
   moveTask = (hoverDeskIndex, dragTaskIndex, dragFromDeskIndex, hoverTaskIndex) => {
@@ -148,10 +175,6 @@ class Table extends Component {
     const { desks } = this.state;
     const prevDesk = this.state.prevDesk !== null ? this.state.prevDesk : dragFromDeskIndex;
     const dragTask = desks[prevDesk].tasks[dragTaskIndex];
-    // console.log('desks[prevDesk] :', desks[prevDesk].tasks);
-    // console.log('dragTaskIndex :', dragTaskIndex);
-
-    // console.log('dragTask :', dragTask);
     
     if (prevDesk !== hoverDeskIndex) {
       this.setState(
@@ -159,13 +182,9 @@ class Table extends Component {
           prevDesk: {$set: hoverDeskIndex},
           desks:
             {
-              [hoverDeskIndex]: hoverTaskIndex !== undefined ? {
+              [hoverDeskIndex]: {
                 tasks: {
                   $splice: [[hoverTaskIndex, 0, dragTask]]
-                }
-              } : {
-                tasks: {
-                  $push: [dragTask]
                 }
               },
               [prevDesk]: {
@@ -196,9 +215,6 @@ class Table extends Component {
         ),
       );
     }
-    setTimeout(() => {
-      console.log('desks[hoverDeskIndex] :', desks[hoverDeskIndex].tasks);
-    }, 20)
   };
 
   componentDidMount() {
@@ -252,6 +268,7 @@ class Table extends Component {
                     moveTask={this.moveTask}
                     handleAddTask={this.handleAddTask}
                     handleRemoveTask={this.handleRemoveTask}
+                    moveTaskToNewDesk={this.moveTaskToNewDesk}
                     handleDeleteDesk={this.handleDeleteDesk}
                     clearPrevDesk={this.clearPrevDesk}
                     handleChangeTask={this.handleChangeTask}/>

@@ -63,10 +63,10 @@ const deskDropTarget = {
 			const dragFromDeskIndex = draggedTask.taskParent;
 			
 			if (props.desk && props.desk.tasks && props.desk.tasks.length === 0) {
-				props.moveTask(hoverDeskIndex, dragTaskIndex, dragFromDeskIndex);
+				props.moveTaskToNewDesk(hoverDeskIndex, dragTaskIndex, dragFromDeskIndex);
+				monitor.getItem().taskIndex = 0;
 			}
 
-			// console.log('monitor.getItem() :', monitor.getItem());
 			monitor.getItem().taskParent = hoverDeskIndex;
 		}
 	}
@@ -154,7 +154,7 @@ export default flow(
     deskDragSource,
     (connect, monitor) => ({
       connectDragSource: connect.dragSource(),
-      isDragging: monitor.isDragging(),
+			isDragging: monitor.isDragging()
     }),
   ),
   DropTarget(

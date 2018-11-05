@@ -66,7 +66,6 @@ const deskDropTarget = {
 				props.moveTaskToNewDesk(hoverDeskIndex, dragTaskIndex, dragFromDeskIndex);
 				monitor.getItem().taskIndex = 0;
 			}
-
 			monitor.getItem().taskParent = hoverDeskIndex;
 		}
 	}

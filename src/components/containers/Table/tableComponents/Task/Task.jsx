@@ -25,7 +25,7 @@ const taskDropTarget = {
 		const hoverDeskIndex = props.deskIndex;
 		const dragFromDeskIndex = draggedTask.taskParent;
 		
-			props.moveTask(hoverDeskIndex, dragTaskIndex, dragFromDeskIndex, hoverTaskIndex);
+		props.moveTask(hoverDeskIndex, dragTaskIndex, dragFromDeskIndex, hoverTaskIndex);
 		monitor.getItem().taskIndex = hoverTaskIndex;
 	},
 };
@@ -50,6 +50,22 @@ class Task extends Component {
 			prevValue: ''
 		});
 	};
+
+	handleBlur = (e, deskIndex, taskIndex) => {
+		if(!e.target.value) {
+			this.handleCancelChangeTask();
+			return
+		}
+		if (e.target.value.trim() === '') {
+			this.handleCancelChangeTask();
+			return;
+		};
+		if (e.target.value === this.props.task.value) {
+			this.handleCancelChangeTask();
+			return;
+		}
+		this.handleApplyChangeTask(e.target.value, deskIndex, taskIndex);
+	}
 
 	handleApplyChangeTask = (value, deskIndex, taskIndex) => {
 		this.props.handleChangeTask(value, deskIndex, taskIndex);
@@ -116,7 +132,7 @@ class Task extends Component {
 										autoFocus
 										value={this.state.value}
 										onChange={this.handleChange}
-										onBlur={this.handleCancelChangeTask}
+										onBlur={e => this.handleBlur(e, deskIndex, taskIndex)}
 										onKeyDown={ e => {this.handleKeyPress(e, deskIndex, taskIndex)} }
 									/>
 							}

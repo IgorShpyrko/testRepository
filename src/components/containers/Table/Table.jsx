@@ -148,8 +148,8 @@ class Table extends Component {
     const { desks } = this.state;
     const prevDesk = this.state.prevDesk !== null ? this.state.prevDesk : dragFromDeskIndex;
     const dragTask = desks[prevDesk].tasks[dragTaskIndex];
-    // console.log('prevDesk :', prevDesk);
-    console.log('dragTaskIndex :', dragTaskIndex);
+    // console.log('desks[prevDesk] :', desks[prevDesk].tasks);
+    // console.log('dragTaskIndex :', dragTaskIndex);
 
     // console.log('dragTask :', dragTask);
     
@@ -165,7 +165,7 @@ class Table extends Component {
                 }
               } : {
                 tasks: {
-                  $set: [dragTask]
+                  $push: [dragTask]
                 }
               },
               [prevDesk]: {
@@ -196,6 +196,9 @@ class Table extends Component {
         ),
       );
     }
+    setTimeout(() => {
+      console.log('desks[hoverDeskIndex] :', desks[hoverDeskIndex].tasks);
+    }, 20)
   };
 
   componentDidMount() {

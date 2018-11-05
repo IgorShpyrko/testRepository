@@ -63,7 +63,6 @@ const deskDropTarget = {
 			const dragFromDeskIndex = draggedTask.taskParent;
 			
 			if (props.desk && props.desk.tasks && props.desk.tasks.length === 0) {
-				// console.log('Desk Desk Desk Desk Desk Desk Desk Desk Desk ')
 				props.moveTask(hoverDeskIndex, dragTaskIndex, dragFromDeskIndex);
 			}
 

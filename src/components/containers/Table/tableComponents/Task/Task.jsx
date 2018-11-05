@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import flow from 'lodash.flow';
-// import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import './Task.css';
 
@@ -27,7 +26,6 @@ const taskDropTarget = {
 		const dragFromDeskIndex = draggedTask.taskParent;
 		
 		if (props.task && props.task.length !== 0) {
-			// console.log('Task Task Task Task Task Task Task Task')
 			props.moveTask(hoverDeskIndex, dragTaskIndex, dragFromDeskIndex, hoverTaskIndex);
 		}
 		monitor.getItem().taskIndex = hoverTaskIndex;

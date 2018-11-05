@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { findDOMNode } from 'react-dom';
 import flow from 'lodash.flow';
+// import { findDOMNode } from 'react-dom';
 import { DragSource, DropTarget } from 'react-dnd';
 import './Task.css';
 
@@ -11,35 +11,25 @@ const taskDragSource = {
 			taskIndex: props.taskIndex,
 			taskParent: props.deskIndex
 		}
+	},
+	endDrag(props) {
+		props.clearPrevDesk()
 	}
 };
 
 const taskDropTarget = {
 	hover(props, monitor, component) {
-		const taskIndex = monitor.getItem().taskIndex;
-		const hoverTaskIndex = props.taskIndex;
-
-		if (taskIndex === hoverTaskIndex) return;
-
-		const hoverBoundingRect = (findDOMNode(
-			component,
-		)).getBoundingClientRect();
 		
-		const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-    const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
-		const clientOffset = monitor.getClientOffset();
-    const hoverClientY = (clientOffset).y - hoverBoundingRect.top;
-    const hoverClientX = (clientOffset).x - hoverBoundingRect.left;
-
-		if (taskIndex < hoverTaskIndex && hoverClientY < hoverMiddleY) {
-      if (hoverClientX < hoverMiddleX) {
-        return
-      }
-		};
-
-		if (taskIndex > hoverTaskIndex && hoverClientY > hoverMiddleY) return;
+		const hoverTaskIndex = props.taskIndex;
 		const draggedTask = monitor.getItem();
-		props.moveTask(taskIndex, props.deskIndex, hoverTaskIndex, draggedTask);
+		const dragTaskIndex = draggedTask.taskIndex;
+		const hoverDeskIndex = props.deskIndex;
+		const dragFromDeskIndex = draggedTask.taskParent;
+		
+		if (props.task && props.task.length !== 0) {
+			// console.log('Task Task Task Task Task Task Task Task')
+			props.moveTask(hoverDeskIndex, dragTaskIndex, dragFromDeskIndex, hoverTaskIndex);
+		}
 		monitor.getItem().taskIndex = hoverTaskIndex;
 	},
 };
@@ -65,15 +55,15 @@ class Task extends Component {
 		});
 	};
 
-	handleApplyChangeTask = (value, id) => {
-		this.props.handleChangeTask(value, id);
+	handleApplyChangeTask = (value, deskIndex, taskIndex) => {
+		this.props.handleChangeTask(value, deskIndex, taskIndex);
 		this.setState({
 			edit: false,
 			prevValue: ''
 		});
 	};
 
-	handleKeyPress = (e, task) => {
+	handleKeyPress = (e, deskIndex, taskIndex) => {
 		if (e.keyCode === 27) {
 			this.handleCancelChangeTask();
 			return;
@@ -84,7 +74,7 @@ class Task extends Component {
 				this.handleCancelChangeTask();
 				return;
 			};
-			this.handleApplyChangeTask(this.state.value, task.id);
+			this.handleApplyChangeTask(this.state.value, deskIndex, taskIndex);
 		};
 	};
 	
@@ -112,7 +102,7 @@ class Task extends Component {
 	};
 
   render() {
-		const { task, isDragging, connectDragSource, connectDropTarget, handleRemoveTask, deskIndex } = this.props;
+		const { task, isDragging, connectDragSource, connectDropTarget, handleRemoveTask, deskIndex, taskIndex } = this.props;
 		const { edit } = this.state;
 
 		const wrapperClassName = isDragging ? 'task-wrapper tw-dragging' : 'task-wrapper';
@@ -131,11 +121,11 @@ class Task extends Component {
 										value={this.state.value}
 										onChange={this.handleChange}
 										onBlur={this.handleCancelChangeTask}
-										onKeyDown={ e => {this.handleKeyPress(e, task)} }
+										onKeyDown={ e => {this.handleKeyPress(e, deskIndex, taskIndex)} }
 									/>
 							}
 						</div>
-						<span className='delete-task' onClick={() => handleRemoveTask(task, deskIndex)}>
+						<span className='delete-task' onClick={() => handleRemoveTask(taskIndex, deskIndex)}>
 							&#x2715;
 						</span>
           </div>

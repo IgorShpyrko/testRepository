@@ -10,73 +10,43 @@ import Desk from './tableComponents/Desk/Desk';
 
 const update = require('immutability-helper');
 
-function recursiveDeepCopy(o) {
-  let newO;
-  let i;
-
-  if (typeof o !== 'object') return o;
-  if (!o) return o;
-
-  if ('[object Array]' === Object.prototype.toString.apply(o)) {
-    newO = [];
-    for (i = 0; i < o.length; i += 1) {
-      newO[i] = recursiveDeepCopy(o[i]);
-    }
-    return newO;
-  }
-
-  newO = {};
-  for (i in o) {
-    if (o.hasOwnProperty(i)) {
-      newO[i] = recursiveDeepCopy(o[i]);
-    }
-  }
-  return newO;
-};
-
 class Table extends Component {
   state = { 
-    desks: null
+    desks: null,
+    prevDesk: null
   };
   
-  handleDeleteDesk = (deletedDesk) => {
-    const { desks } = this.state;
-
-    const newDesks = desks.filter(desk => {
-      if (desk.id !== deletedDesk.id) {
-        return desk
-      } else {
-        return null
-      }
-    });
-
-    this.setState({
-      desks: newDesks
-    });
+  handleDeleteDesk = (deskIndex) => {
+    this.setState(
+			update(this.state, {
+				desks: {
+					$splice: [
+            [deskIndex, 1]
+          ],
+				}
+			}),
+		);
   };
 
   handleAddDesk = () => {
-    const { desks } = this.state;
-    let maxDeskId = 0;
+    const { desks } = this.state
 
-    desks.forEach(desk => {
-      if (maxDeskId < desk.id) {
-        maxDeskId = desk.id
-      };
-    });
-
-    let newDesk = {
-      id: maxDeskId + 1,
-      name: `new Desk`,
-      tasks: []
-    };
-
-    this.setState({
-      desks: [
-        ...desks,
-        newDesk
-      ]
-    });
+    this.setState(
+			update(this.state, {
+				desks: {
+					$splice: [
+            [desks.length,
+              0,
+              {
+                id: desks.length,
+                name: `new Desk`,
+                tasks: []
+              }
+            ]
+          ],
+				}
+			}),
+		);
   };
 
   moveDesk = (dragIndex, hoverIndex) => {
@@ -95,100 +65,138 @@ class Table extends Component {
 		);
   };
 
-
-  
-
-
-  handleRemoveTask = (taskToDelete, deskIndex) => {
-    const { desks } = this.state;
-    let newDesks = recursiveDeepCopy(desks);
-
-    newDesks[deskIndex].tasks = newDesks[deskIndex].tasks.filter(task => {
-      if (taskToDelete.id !== task.id) {
-        return task
-      } else {
-        return null
-      }
-    })
-
-    this.setState({
-      desks: newDesks
-    })
-  }
-
-  handleAddTask = (currentDesk) => {
-    const { desks } = this.state;
-    let maxExistingId = 0;
-    
-    desks.forEach(desk => {
-      desk.tasks && desk.tasks.forEach(task => {
-        if (+task.id.split('_')[0] === currentDesk.id) {
-          if (maxExistingId < +task.id.split('_')[1]) {
-            maxExistingId = +task.id.split('_')[1]
+  handleRemoveTask = (taskIndex, deskIndex) => {
+    this.setState(
+      update(this.state, {
+        desks:
+          {
+            [deskIndex]: {
+              tasks: {
+                $splice: [[taskIndex, 1]]
+              }
+            }
           }
-        };
-      });
-    });
-    
-    let newTask = {
-      id: `${currentDesk.id}_${maxExistingId + 1}`,
-      value: 'new Task'
-    };
-
-    let newDesks = recursiveDeepCopy(desks);
-
-    newDesks.forEach(desk => {
-      if (desk.id === currentDesk.id) {
-        desk.tasks = desk.tasks.concat([newTask])
-      }
-    })
-
-    this.setState({
-      desks: newDesks
-    });
-  };
-
-  handleChangeTask = (taskNewValue, taskId) => {
-    const desks = recursiveDeepCopy(this.state.desks);
-
-    desks.forEach(desk => {
-      desk.tasks && desk.tasks.forEach(task => {
-        if (task.id === taskId) {
-          task.value = taskNewValue
         }
-      })
-    })
+      ),
+    );
+  }
 
-    this.setState({
-      desks: desks
-    })
+  handleAddTask = (currentDeskIdx) => {
+    const { desks } = this.state;
+
+    this.setState(
+      update(this.state, {
+        desks:
+          {
+            [currentDeskIdx]: {
+              tasks: 
+              desks[currentDeskIdx].tasks.length !== 0 
+              ? {
+                $splice: [
+                  [
+                    desks[currentDeskIdx].tasks.length,
+                    0,
+                    {
+                      id: `${currentDeskIdx}_${desks[currentDeskIdx].tasks.length}`,
+                      value: 'new Task'
+                    }
+                  ]
+                ]
+              }
+              : {
+                $set: [
+                    {
+                      id: `${currentDeskIdx}_${desks[currentDeskIdx].tasks.length}`,
+                      value: 'new Task'
+                    }
+                ]
+              }
+            }
+          }
+        }
+      ),
+    );
   };
 
-  moveTask = (hoverDeskIndex, dragTaskIndex) => {
-    const { desks } = this.state;
-    const dragTask = desks[hoverDeskIndex].tasks[dragTaskIndex];
+  handleChangeTask = (taskNewValue, deskIndex, taskIndex) => {
+    this.setState(
+      update(this.state, {
+        desks:
+          {
+            [deskIndex]: {
+              tasks: {
+                [taskIndex] : {
+                  value: {$set: taskNewValue}
+                }
+              }
+            }
+          }
+        }
+      ),
+    );
+  };
 
-    // this.setState(
-		// 	update(
-    //     this.state, 
-    //     desks,
-    //     {
-    //       [dragFromDeskIndex]: {
-    //         tasks: {
-    //           $splice: [dragTaskIndex, 1]
-    //         }
-    //       }
-    //     },
-    //     {
-    //       [hoverDeskIndex]: {
-    //         tasks: {
-    //           $splice: [hoverTaskIndex, 0, dragTask]
-    //         }
-    //       }
-    //     }
-		// 	),
-		// );
+  clearPrevDesk = () => {
+    this.setState({
+      prevDesk: null
+    });
   }
+
+  moveTask = (hoverDeskIndex, dragTaskIndex, dragFromDeskIndex, hoverTaskIndex) => {
+    // if (hoverDeskIndex === dragFromDeskIndex && dragTaskIndex === hoverTaskIndex) return
+  
+    const { desks } = this.state;
+    const prevDesk = this.state.prevDesk !== null ? this.state.prevDesk : dragFromDeskIndex;
+    const dragTask = desks[prevDesk].tasks[dragTaskIndex];
+    // console.log('prevDesk :', prevDesk);
+    console.log('dragTaskIndex :', dragTaskIndex);
+
+    // console.log('dragTask :', dragTask);
+    
+    if (prevDesk !== hoverDeskIndex) {
+      this.setState(
+        update(this.state, {
+          prevDesk: {$set: hoverDeskIndex},
+          desks:
+            {
+              [hoverDeskIndex]: hoverTaskIndex !== undefined ? {
+                tasks: {
+                  $splice: [[hoverTaskIndex, 0, dragTask]]
+                }
+              } : {
+                tasks: {
+                  $set: [dragTask]
+                }
+              },
+              [prevDesk]: {
+                tasks: {
+                  $splice: [[dragTaskIndex, 1]]
+                }
+              }
+            }
+          }
+        ),
+      );
+    } else {
+      this.setState(
+        update(this.state, {
+          prevDesk: {$set: hoverDeskIndex},
+          desks:
+            {
+              [hoverDeskIndex]: {
+                tasks: {
+                  $splice: [
+                    [dragTaskIndex, 1],
+                    [hoverTaskIndex, 0, dragTask],
+                  ]
+                }
+              }
+            }
+          }
+        ),
+      );
+    }
+  };
 
   componentDidMount() {
     const desks = JSON.parse(window.localStorage.getItem('desks'));
@@ -226,26 +234,33 @@ class Table extends Component {
       <React.Fragment>
         <h3>Table</h3>
         <hr style={{margin: 0}}/>
-        <div className='desks-wrapper'>
-          {desks && desks.map((desk, idx) => {
-            return (
-              <Desk
-                key={idx}
-                deskIndex={idx}
-                id={desk.id}
-                desk={desk}
-                moveDesk={this.moveDesk}
-                moveTask={this.moveTask}
-                handleAddTask={this.handleAddTask}
-                handleRemoveTask={this.handleRemoveTask}
-                handleDeleteDesk={this.handleDeleteDesk}
-                handleChangeTask={this.handleChangeTask}/>
+        {
+          desks
+          ? (
+            <div className='desks-wrapper'>
+              {desks.map((desk, idx) => {
+                return (
+                  <Desk
+                    key={idx}
+                    deskIndex={idx}
+                    id={desk.id}
+                    desk={desk}
+                    moveDesk={this.moveDesk}
+                    moveTask={this.moveTask}
+                    handleAddTask={this.handleAddTask}
+                    handleRemoveTask={this.handleRemoveTask}
+                    handleDeleteDesk={this.handleDeleteDesk}
+                    clearPrevDesk={this.clearPrevDesk}
+                    handleChangeTask={this.handleChangeTask}/>
+                    )
+                  })}
+                <div className='add-desk' onClick={this.handleAddDesk}>
+                  <span>Click to add desk</span>
+                </div>
+              </div>
             )
-          })}
-          <div className='add-desk' onClick={this.handleAddDesk}>
-            <span>Click to add desk</span>
-          </div>
-        </div>
+          : <div>Fetching desks</div>
+        }
       </React.Fragment>
     );
   };

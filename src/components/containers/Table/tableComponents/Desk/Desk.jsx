@@ -26,11 +26,9 @@ const deskDropTarget = {
 		if (!component) return null;
 
 		if (monitor.getItemType() === 'desk') {
-			console.log('props', props)
 			const dragIndex = monitor.getItem().deskIndex;
-			// console.log('dragIndex :', dragIndex);
 			const hoverIndex = props.deskIndex;
-			// console.log('hoverIndex :', hoverIndex);
+			
 			if (dragIndex === hoverIndex) return;
 
 			const hoverBoundingRect = (findDOMNode(
@@ -55,20 +53,23 @@ const deskDropTarget = {
 				};
 			};
 
-			props.moveDesk(dragIndex, hoverIndex)
-			monitor.getItem().deskIndex = hoverIndex
+			props.moveDesk(dragIndex, hoverIndex);
+			monitor.getItem().deskIndex = hoverIndex;
 		};
-
 		if (monitor.getItemType() === 'task') {
-
 			const hoverDeskIndex = props.deskIndex;
-			console.log('hoverDeskIndex :', hoverDeskIndex);
+			const draggedTask = monitor.getItem();
+			const dragTaskIndex = draggedTask.taskIndex;
+			const dragFromDeskIndex = draggedTask.taskParent;
+			
+			if (props.desk && props.desk.tasks && props.desk.tasks.length === 0) {
+				// console.log('Desk Desk Desk Desk Desk Desk Desk Desk Desk ')
+				props.moveTask(hoverDeskIndex, dragTaskIndex, dragFromDeskIndex);
+			}
 
-			const dragTaskIndex = monitor.getItem().taskIndex;
-			console.log('dragTaskIndex :', dragTaskIndex);
-
-			props.moveTask(hoverDeskIndex, dragTaskIndex)
-		};
+			// console.log('monitor.getItem() :', monitor.getItem());
+			monitor.getItem().taskParent = hoverDeskIndex;
+		}
 	}
 }
 
@@ -100,7 +101,8 @@ class Desk extends Component {
 			moveTask,
 			handleAddTask,
 			handleRemoveTask,
-			handleDeleteDesk
+			handleDeleteDesk,
+			clearPrevDesk
 		} = this.props;
 
 		const opacity = isDragging ? 0.5 : 1;
@@ -111,29 +113,31 @@ class Desk extends Component {
 			connectDragSource(
 				connectDropTarget(
 					<div className='desk-item-wrapper' style={{opacity}}>
-						{this.state.isModalOpened && <DeskModal desk={desk} closeModal={this.closeModal} deleteDesk={handleDeleteDesk}/>}
+						{this.state.isModalOpened && <DeskModal deskIndex={deskIndex} closeModal={this.closeModal} deleteDesk={handleDeleteDesk}/>}
 						<div className='desk-item'>
 							<div className='header-wrapper'>
 								<h3>{desk.name}</h3>
 								<span onClick={this.openModal}>&hellip;</span>
 							</div>
 							<div className='tasks'>
-								{desk.tasks && desk.tasks.map((task, idx) => {
+								{desk.tasks && desk.tasks.length !== 0 && desk.tasks.map((task, idx) => {
 									return (
-										<Task 
-											key={idx}
-											id={task.id}
-											task={task}
-											taskIndex={idx}
-											deskIndex={deskIndex}
-											moveTask={moveTask}
-											handleChangeTask={handleChangeTask}
-											handleRemoveTask={handleRemoveTask}
-										/>
+										task &&
+											<Task 
+												key={idx}
+												id={task.id}
+												task={task}
+												taskIndex={idx}
+												deskIndex={deskIndex}
+												moveTask={moveTask}
+												clearPrevDesk={clearPrevDesk}
+												handleChangeTask={handleChangeTask}
+												handleRemoveTask={handleRemoveTask}
+											/>
 									)
 								})}
 							</div>
-							<div className='add-task-wrapper' onClick={() => handleAddTask(desk)}>
+							<div className='add-task-wrapper' onClick={() => handleAddTask(deskIndex)}>
 								<span className='add-task-title'>Add task</span>
 								<span className='add-task-icon'>+</span>
 							</div>

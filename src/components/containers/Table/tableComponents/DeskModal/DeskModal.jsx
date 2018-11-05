@@ -18,6 +18,11 @@ export default class Modal extends Component {
     };
   };
 
+  handleDeleteDesk = () => {
+    this.props.closeModal();
+    this.props.deleteDesk(this.props.deskIndex);
+  }
+
   componentDidMount() {
     modalRoot.appendChild(this.el);
   };
@@ -27,13 +32,11 @@ export default class Modal extends Component {
   };
   
   render() {
-    const { desk, deleteDesk } = this.props;
-
     return ReactDOM.createPortal(
       <div className='modal-container'>
         {this.props.children}
         <h3>Some staff Here</h3>
-        <div onClick={() => deleteDesk(desk)}>Delete desk</div>
+        <div onClick={this.handleDeleteDesk}>Delete desk</div>
         <div onClick={this.props.closeModal}>Close Modal</div>
       </div>,
       this.el,
